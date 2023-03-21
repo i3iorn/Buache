@@ -10,3 +10,7 @@ class BuacheException(Exception):
 
 class AdapterCountException(BuacheException):
     pass
+
+
+class SetupError(BuacheException):
+    pass

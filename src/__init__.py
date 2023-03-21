@@ -1,6 +1,12 @@
-import json
-import logging.config
-from pathlib import Path
+import importlib
+import logging
+import os
+import tracemalloc
+from time import time, sleep
+
+from .exceptions import AdapterCountException, BuacheException, SetupError
+from .config.environment import ADAPTERS, LOG_PATH, LOG_LEVEL
+from .monitor import Monitor
 
 logging.captureWarnings(True)
 
@@ -20,23 +26,13 @@ def add_logging_name(item):
     setattr(logging, item['name'].lower(), log_to_root)
 
 
-levels = [
-    {
-        'num': logging.DEBUG - 9,
-        'name': 'TRACE',
-    },
-    {
-        'num': logging.DEBUG + 5,
-        'name': 'VERBOSE',
-    },
-]
-
-for level in levels:
-    add_logging_name(level)
-
-with open(Path("Config/log.json").absolute(), "r", encoding="UTF8") as f:
-    logger_config = json.load(f)
-
-logging.config.dictConfig(logger_config)
-
-logging.info(f"Logger started")
+def create_directories(dirs):
+    """
+    Creates a list of directories recursively if they do not exist.
+    :param dirs: A list of directory paths to create.
+    """
+    for directory in dirs:
+        parent = os.path.pardir
+        new_path = f'{parent}/{directory}'
+        if not os.path.exists(new_path):
+            os.makedirs(new_path)

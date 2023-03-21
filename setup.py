@@ -9,6 +9,7 @@ setup(
     url='https://github.com/i3iorn/buache',
     packages=find_packages(),
     install_requires=[
+        'requests'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
