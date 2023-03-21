@@ -6,3 +6,7 @@ class Error:
 
 class BuacheException(Exception):
     pass
+
+
+class AdapterCountException(BuacheException):
+    pass

@@ -1,15 +1,14 @@
 [
   {
-    "bring": {
-      "type": "api",
-      "base_url": "https://api.bring.com/address",
-      "endpoints": [
-        {
-          "address": " /api/{country-code}/addresses ",
-          "method": "GET",
-          "parameters": ["country-code"]
-        }
-      ]
-    }
+    "name": "bring",
+    "type": "api",
+    "base_url": "https://api.bring.com/address",
+    "endpoints": [
+      {
+        "address": " /api/{country-code}/addresses ",
+        "method": "GET",
+        "parameters": ["country-code"]
+      }
+    ]
   }
 ]

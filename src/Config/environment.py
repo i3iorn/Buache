@@ -1,5 +1,9 @@
+import json
 import os
 from pathlib import Path
+
+with open(Path('Config/adapters.json').absolute(), 'r') as adapters:
+    ADAPTERS = json.load(adapters)
 
 with open(Path('../.env').absolute(), 'r', encoding='utf8') as env:
     for line in env:
