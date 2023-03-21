@@ -1,0 +1,36 @@
+{
+    "version": 1,
+    "disable_existing_loggers": "True",
+    "formatters": {
+        "console": {
+            "format": "[%(name)20s] [%(funcName)20s] [%(levelname)10s] [%(lineno)5d] :: %(message)s"
+        },
+        "file": {
+            "format": "%(asctime)s - %(name)s - %(funcName)s - %(levelname)s - %(lineno)d - %(message)s"
+        }
+    },
+    "handlers": {
+        "console": {
+            "level": "TRACE",
+            "formatter": "console",
+            "class": "logging.StreamHandler",
+            "stream": "ext://sys.stdout"
+        },
+        "file": {
+            "level": "TRACE",
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "file",
+            "filename": "../data/Logs/application.log",
+            "backupCount": 5,
+            "maxBytes": 2306867,
+            "encoding": "UTF8"
+        }
+    },
+    "loggers": {
+        "": {
+            "handlers": ["console", "file"],
+            "level": "TRACE",
+            "propagate": "False"
+        }
+    }
+}
