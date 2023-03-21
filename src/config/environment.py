@@ -10,6 +10,8 @@ with open(Path('../.env').absolute(), 'r', encoding='utf8') as env:
         key, value = line.split('=')
         os.environ[key] = value
 
+ROOT_DIR = Path(os.path.dirname(os.path.abspath(__file__))).parent.parent
+
 QUEUE_MAX_SIZE = os.getenv('QUEUE_MAX_SIZE') or 100
 
 CACHE_TTL = os.getenv('CACHE_TTL') or 28800

@@ -10,12 +10,20 @@ class Api(BaseAdapter):
         :param base_url: The base URL of the API.
         :param headers: Optional HTTP headers to include in requests.
         """
+        self.config = config or {}
         super().__init__(self)
         self.log.trace('Instantiating {}'.format(__name__))
         self.base_url = base_url or config['base_url'] or ''
         self.headers = headers or {}
-        self.config = config or {}
         self.name = self.config['name']
+
+    @property
+    def config(self) -> dict:
+        return self._config
+
+    @config.setter
+    def config(self, value: dict) -> None:
+        self._config = value
 
     def __name__(self):
         return self.config['name']

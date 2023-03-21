@@ -9,7 +9,7 @@ class BaseAdapter:
     def __init__(self, adapter):
         self.log = logging.getLogger(__name__)
         self.log.trace('Instantiating {}'.format(__name__))
-        self.pre_load = adapter.__name__
+        self.pre_load = adapter.config['type'] != 'api'
 
     @property
     def log(self) -> str:

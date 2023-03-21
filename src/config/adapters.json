@@ -5,10 +5,15 @@
     "base_url": "https://api.bring.com/address",
     "endpoints": [
       {
-        "address": " /api/{country-code}/addresses ",
+        "address": "/api/{country-code}/addresses",
         "method": "GET",
         "parameters": ["country-code"]
       }
     ]
+  },
+  {
+    "name": "file_queue",
+    "type": "file",
+    "path": "data/queue/main.queue"
   }
 ]

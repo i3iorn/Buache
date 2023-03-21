@@ -46,7 +46,10 @@ class Buache:
                 self._run_input_monitor()
 
                 if not self.queue.empty():
-                    self._get_next_item()
+                    self.logger.debug(f'Queue is not empty.')
+                    item = self.queue.dequeue()
+                    func_ = item.callback_function
+                    func_()
 
                 self._handle_errors()
                 self._log_status(start, last)
@@ -58,6 +61,7 @@ class Buache:
             self.logger.error('No active adapters.')
         except Exception as e:
             self.logger.error(f'Error occurred in main loop. {e}')
+            raise BuacheException(f'Unrecoverable error in application') from e
 
     def _load_adapters(self) -> None:
         """
@@ -83,10 +87,7 @@ class Buache:
         pre_load_adapters = [adapter for adapter in self.active_adapters if adapter.pre_load]
         if len(pre_load_adapters) > 0:
             self.logger.debug('Starting monitoring for adapters that needs to be pre loaded. ')
-            monitor = Monitor(self.active_adapters)
-
-    def _get_next_item(self):
-        return self.queue.dequeue()
+            monitor = Monitor(self.queue, self.active_adapters)
 
     def _handle_errors(self):
         """

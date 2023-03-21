@@ -14,3 +14,7 @@ class AdapterCountException(BuacheException):
 
 class SetupError(BuacheException):
     pass
+
+
+class AddToQueueError(BuacheException):
+    pass

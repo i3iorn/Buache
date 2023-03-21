@@ -34,6 +34,11 @@
         "Application": {
             "handlers": ["console", "file"],
             "level": "DEBUG"
+        },
+        "src.queue": {
+            "handlers": ["console", "file"],
+            "level": "VERBOSE",
+            "propagate": 0
         }
     }
 }

@@ -9,7 +9,7 @@ from src.application import Buache
 
 
 def startup():
-    directories = ['data/logs']
+    directories = ['data/logs', 'data/queue']
     create_directories(directories)
 
     levels = [
