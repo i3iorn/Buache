@@ -2,10 +2,10 @@ import json
 import os
 from pathlib import Path
 
-with open(Path('config/adapters.json').absolute(), 'r') as adapters:
+with open(Path('src/config/adapters.json').absolute(), 'r') as adapters:
     ADAPTERS = json.load(adapters)
 
-with open(Path('../.env').absolute(), 'r', encoding='utf8') as env:
+with open(Path('.env').absolute(), 'r', encoding='utf8') as env:
     for line in env:
         key, value = line.split('=')
         os.environ[key] = value
