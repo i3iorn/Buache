@@ -45,7 +45,7 @@ class Buache:
             while True:
                 self._run_input_monitor()
 
-                if not self.queue.is_empty():
+                if not self.queue.empty():
                     self._get_next_item()
 
                 self._handle_errors()

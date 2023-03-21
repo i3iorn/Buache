@@ -1,5 +1,4 @@
 import json
-import logging
 import os
 from pathlib import Path
 
@@ -11,7 +10,9 @@ with open(Path('../.env').absolute(), 'r', encoding='utf8') as env:
         key, value = line.split('=')
         os.environ[key] = value
 
-CACHE_LIMIT = os.getenv('CACHE_LIMIT') or 3600
+QUEUE_MAX_SIZE = os.getenv('QUEUE_MAX_SIZE') or 100
+
+CACHE_TTL = os.getenv('CACHE_TTL') or 28800
 
 MONITOR_SLEEP = os.getenv('MONITOR_SLEEP') or 2
 
