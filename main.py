@@ -1,3 +1,3 @@
-from src.declarations import Declaration
+import src
 
-print(Declaration('source').read())
+app = src

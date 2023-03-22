@@ -1,0 +1,2 @@
+class BuacheException(Exception):
+    pass

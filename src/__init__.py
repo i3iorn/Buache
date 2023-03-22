@@ -20,11 +20,6 @@ __all__ = [
     'Rule'
 ]
 
-
-class BuacheException(Exception):
-    pass
-
-
 # Define custom logging levels
 logging.VERBOSE = 15
 logging.TRACE = 5

@@ -1,7 +1,7 @@
 from typing import List, Optional
 import logging
 
-from src import BuacheException
+from src.exceptions import BuacheException
 from src.rule import Rule
 
 
@@ -96,13 +96,13 @@ class ComponentNotFound(ComponentException):
 
 
 class Address:
-    def __init__(self, components: List[AddressComponent]):
+    def __init__(self, components: Optional[List[AddressComponent]]):
         """
         A class representing an address, composed of multiple address components.
 
         :param components: A list of AddressComponent objects representing the components of the address.
         """
-        self.components = components
+        self.components = components or None
 
     def validate(self) -> bool:
         """
@@ -149,5 +149,7 @@ class Address:
 
         :return: A string representing the formatted address.
         """
-        # TODO: Handle case when formatted_address is None
-        return ' '.join([component.formatted for component in self.components])
+        if all(self.components):
+            return ' '.join([component.formatted for component in self.components])
+        else:
+            return ''

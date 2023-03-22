@@ -5,7 +5,7 @@ from pathlib import Path
 class Declaration:
     def __init__(self, resource_type: str):
         self.resource_type = resource_type
-        self.declaration_file_path = Path(f"src/declarations/{resource_type}_declaration.json").absolute()
+        self.declaration_file_path = Path(f"declarations/{resource_type}_declaration.json").absolute()
 
     def create(self, resource_data: dict):
         declarations = self.read()
