@@ -3,57 +3,37 @@ import logging
 
 from src.exceptions import BuacheException
 from src.rule import Rule
+from src.declarations import Declaration
+
+
+class AddressException(BuacheException):
+    pass
+
+
+class ComponentException(AddressException):
+    pass
+
+
+class ComponentNotFound(ComponentException):
+    pass
 
 
 class AddressComponent:
-    ALLOWED_LEVELS = {
-        'Continent': 0,
-        'Country': 1,
-        'Region': 2,
-        'Sub-region': 3,
-        'Administrative Region': 3,
-        'Municipality': 4,
-        'County': 4,
-        'City': 5,
-        'Borough': 6,
-        'Zip': 6,
-        'Street': 7,
-        'Street number': 8,
-        'Entrance': 9,
-        'Apartment number': 10,
-    }
+    """
+    A class representing a component of an address, such as the street, city, or postal code.
 
+    :param component_type: The type of the address component, such as 'street', 'city', or 'postal_code'.
+    :param value: The value of the address component, such as '123 Main St' or 'New York'.
+    """
     def __init__(
-        self, value: str,
-        component_type: str = None,
-        level: str = None,
-        formatted: Optional[str] = None,
+        self,
+        value: str,
+        component_type: str,
         rules: Optional[List[Rule]] = None
     ):
-        """
-        A class representing a component of an address, such as the street, city, or postal code.
 
-        :param component_type: The type of the address component, such as 'street', 'city', or 'postal_code'.
-        :param value: The value of the address component, such as '123 Main St' or 'New York'.
-        :param level: The level of the address component, with higher levels representing more general components.
-                      Must be one of the values in ALLOWED_LEVELS.
-        :param formatted: An optional formatted version of the address component, such as '123 Main St, New York'.
-        """
-
-        if component_type not in self.ALLOWED_LEVELS.keys() and component_type is not None:
-            raise ValueError(f"Invalid component_type: {component_type}. Allowed types: {self.ALLOWED_LEVELS.keys()}")
-
-        if level not in self.ALLOWED_LEVELS.values() and level is not None:
-            raise ValueError(f"Invalid level: {level}. Allowed levels: {self.ALLOWED_LEVELS.values()}")
-
-        self.component_type = component_type \
-                              or [k for k, v in self.ALLOWED_LEVELS.items() if v == level][0] \
-                              or ValueError(f'Both component_type and level cannot be None at the same time.')
-
+        self.component_type = component_type
         self.value = value
-        self.level = self.ALLOWED_LEVELS[self.component_type]
-
-        self.formatted = formatted
 
     def validate(self) -> bool:
         """
@@ -68,6 +48,7 @@ class AddressComponent:
             return False
 
         if not self.value.isalnum():
+            logging.warning(f"{self.component_type} is not alphanumeric.")
             return False
 
         return True
@@ -83,18 +64,6 @@ class AddressComponent:
         return self.value
 
 
-class AddressException(BuacheException):
-    pass
-
-
-class ComponentException(AddressException):
-    pass
-
-
-class ComponentNotFound(ComponentException):
-    pass
-
-
 class Address:
     def __init__(self, components: Optional[List[AddressComponent]]):
         """
@@ -102,24 +71,69 @@ class Address:
 
         :param components: A list of AddressComponent objects representing the components of the address.
         """
-        self.components = components or None
+        self.components = components or []
 
-    def validate(self) -> bool:
+    @staticmethod
+    def _score_component(substring: str, component_type: str, component_declaration: dict) -> int:
         """
-        Validate that the address has valid data.
+        Given a substring, component type, and component declaration, score the substring based on how well it matches
+        the patterns in the declaration.
 
-        :return: True if the address is valid, False otherwise.
+        :param substring: The substring to score.
+        :param component_type: The type of component the substring represents.
+        :param component_declaration: The declaration for the component type.
+        :return: An integer score representing how well the substring matches the declaration.
         """
-        # TODO: Implement validation logic
-        # Example validation:
-        if len(self.components) == 0:
-            logging.warning("The address has no components.")
-            return False
-        for component in self.components:
-            if not component.validate():
-                logging.warning(f"Invalid component: {component.component_type}")
-                return False
-        return True
+        # TODO: Implement scoring logic
+        # Example scoring:
+        score = 0
+        for pattern in component_declaration["patterns"]:
+            if pattern in substring:
+                score += 1
+        return score
+
+    def parse_address(self, address_str: str):
+        """
+        Parse an address string into its components.
+
+        :param address_str: The address string to parse.
+        """
+        # Create an empty list to hold the parsed components
+        parsed_components = []
+
+        # Iterate over each component type and its declaration
+        for component_type, component_declaration in Declaration.read("address_component").items():
+
+            # Create an empty list to hold scores for each substring
+            scores = []
+
+            # Iterate over each substring in the address string
+            for i in range(len(address_str)):
+                for j in range(i, len(address_str)):
+                    substring = address_str[i:j + 1]
+
+                    # Score the substring based on how well it matches the component declaration
+                    score = self._score_component(substring, component_type, component_declaration)
+                    if score > 0:
+                        scores.append((substring, score))
+
+            if scores:
+                # Sort the scores in descending order
+                scores.sort(key=lambda x: x[1], reverse=True)
+
+                # Check if the highest-scoring substring has a score that is greater than or equal to the score of
+                # the next highest-scoring substring. If not, then there is ambiguity, and we cannot determine the
+                # correct value.
+                if scores[0][1] >= scores[1][1]:
+                    # The highest-scoring substring is unambiguous, so add it to the list of parsed components
+                    value = scores[0][0]
+                    component = AddressComponent(value, component_type)
+                    parsed_components.append(component)
+                else:
+                    # There is ambiguity, so we cannot determine the correct value. Log a warning and move on.
+                    logging.warning(f"Ambiguous value for {component_type}: {scores[0][0]} or {scores[1][0]}")
+
+        self.components = parsed_components
 
     def get_component(self, component_type: str) -> Optional[AddressComponent]:
         """
@@ -133,23 +147,13 @@ class Address:
                 return component
         raise ComponentNotFound(component_type)
 
-    def get_components_by_level(self, level: int) -> List[AddressComponent]:
-        """
-        Get a list of all address components with the given level.
-
-        :param level: The level of the address components to get.
-        :return: A list of AddressComponent objects with the given level.
-        """
-        # TODO: Add error handling for when level is not found
-        return [component for component in self.components if component.level == level]
-
-    def get_formatted_address(self) -> str:
+    def __str__(self) -> str:
         """
         Get a formatted version of the address.
 
         :return: A string representing the formatted address.
         """
         if all(self.components):
-            return ' '.join([component.formatted for component in self.components])
+            return ' '.join([component.format() for component in self.components])
         else:
             return ''

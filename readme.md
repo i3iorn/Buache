@@ -59,20 +59,78 @@ Defines the linkage between address components.
 
 1. Continent
 2. Country
-3. Region
-4. Sub-region / Administrative Region
-5. Municipality / County
-6. City
-7. Borough / Zip
+3. Administrative Region Large
+4. Municipality
+5. City
+6. Administrative Region Medium 
+7. Zip
 8. Street
 9. Street number
 10. Entrance
 11. Apartment number
 
-### 3.6.3 Related data
+#### 3.6.3 Related data
 
 * Time zone
 * Languages
 * Cultures
 * Religions
 * Address type
+
+### 3.7 Address Parsing
+
+#### 3.7.1 Address breakdown
+
+#### 3.7.1.1 ___String parts using sliding window___
+
+Starting with 1 character we break up the address string into pieces of increasing length up til len(Address) / 2 
+or 12 whichever is larger.
+Example for 1-3 characters using "Daggränd 17 186 66 Hedeby":
+
+1 Character
+
+|0| 1   | 2   | 3   | 4   | 5   | 6   | 7   | 8   | 9   | 
+|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|
+| D   | a   | g   | g   | r   | ä   | n   | d   |     | 1   |
+| 7   |     | 1   | 8   | 6   |     | 6   | 6   |     | H   |
+| e   | d   | e   | b   | y   |     |     |     |     |     |
+
+2 Characters
+
+| 0   | 1   | 2   | 3   | 4 | 5   | 6   | 7   | 8   | 9   | 
+|-----|-----|-----|-----|---|-----|-----|-----|-----|-----|
+| Da  | ag  | gg  | gr  | rä | än  | nd  | d   | 1   | 17  |
+| 7   | 1   | 18  | 86  | 6 | 66  | 6   | H   | he  | ed  |
+| de  | de  | eb  | by  |   |     |     |     |     |     |
+
+3 Characters
+
+| 0   | 1   | 2   | 3   | 4   | 5   | 6   | 7   | 8   | 9   | 
+|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|
+| Dag | agg | ggr | grä | rän | änd | nd  | d 1 | 17  | 17  |
+| 7 1 | 18  | 186 | 86  | 6 6 | 66  | 66  | 6 H | He  | Hed |
+| ede | deb | eby |     |     |     |     |     |     |     |
+
+#### 3.7.1.2 ___Create a map___
+
+All strings are trimmed and strings that have a space inside them are ignored. Parts are placed into a dictionary 
+where the string parts are the keys. Example:
+
+```
+{
+   agg: {
+        street_number: None,
+        street_name: None,
+        ...
+   },
+   66: {
+        street_number: None,
+        street_name: None,
+        ...
+   }
+}
+```
+
+#### 3.7.1.3 ___Apply rules___
+
+Next we go through all the strings and apply all rules starting with the longest strings. 

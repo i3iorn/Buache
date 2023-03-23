@@ -73,29 +73,6 @@ class Rule:
 
         return True
 
-"""
-import re
-
-class Rule:
-    def __init__(self, condition, action):
-        self.condition = condition
-        self.action = action
-    
-    def evaluate(self, fact):
-        if self.condition(fact):
-            return self.action(fact)
-
-class RuleEngine:
-    def __init__(self):
-        self.rules = []
-
-    def add_rule(self, rule):
-        self.rules.append(rule)
-
-    def execute(self, fact):
-        for rule in self.rules:
-            result = rule.evaluate(fact)
-            if result:
-                return result
-
-"""
+    @classmethod
+    def from_dict(cls, rule):
+        pass
