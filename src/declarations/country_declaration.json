@@ -1,42 +1,44 @@
-{
-    "name": "Sweden",
-    "alpha-2": "SE",
-    "postal-code": {
-        "format": "NNN NN",
-        "regex": "^[0-9]{3}\\s?[0-9]{2}$"
-    },
-    "region": {
-        "type": "administrative",
-        "format": "region_large region_medium",
-        "fields": {
-            "region_large": {
-                "name": "Län",
-                "format": "alpha"
-            },
-            "region_medium": {
-                "name": "Kommun",
-                "format": "alpha"
+[
+    {
+        "name": "Sweden",
+        "alpha-2": "SE",
+        "postal-code": {
+            "format": "NNN NN",
+            "regex": "^[0-9]{3}\\s?[0-9]{2}$"
+        },
+        "region": {
+            "type": "administrative",
+            "format": "region_large region_medium",
+            "fields": {
+                "region_large": {
+                    "name": "Län",
+                    "format": "alpha"
+                },
+                "region_medium": {
+                    "name": "Kommun",
+                    "format": "alpha"
+                }
             }
+        },
+        "city": {
+            "name": "Ort",
+            "format": "alpha"
+        },
+        "street": {
+            "name": "Gata",
+            "format": "alpha"
+        },
+        "street-number": {
+            "name": "Gatunummer",
+            "format": "alphanum"
+        },
+        "entrance": {
+            "name": "Ingång",
+            "format": "alphanum"
+        },
+        "apartment-number": {
+            "name": "Lägenhetsnummer",
+            "format": "num"
         }
-    },
-    "city": {
-        "name": "Ort",
-        "format": "alpha"
-    },
-    "street": {
-        "name": "Gata",
-        "format": "alpha"
-    },
-    "street-number": {
-        "name": "Gatunummer",
-        "format": "alphanum"
-    },
-    "entrance": {
-        "name": "Ingång",
-        "format": "alphanum"
-    },
-    "apartment-number": {
-        "name": "Lägenhetsnummer",
-        "format": "num"
     }
-}
+]

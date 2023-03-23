@@ -1,5 +1,5 @@
-{
- "bring": {
+[
+ {
     "name": "bring",
     "description": "Bring API for address lookup",
     "url": "https://api.bring.com/shippingguide/api/postalCode.json",
@@ -18,4 +18,4 @@
       "language"
     ]
   }
-}
+]

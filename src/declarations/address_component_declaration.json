@@ -1,62 +1,82 @@
-{
-    "country": {
+[
+    {
+        "name": "country",
         "string_type": "alpha",
         "length": [2, 2],
         "required": true,
-        "description": "Country code ISO 3166-1 alpha-2 format"
+        "description": "Country code ISO 3166-1 alpha-2 format",
+        "threshold": 1
     },
-    "administrative_region_large": {
+    {
+        "name": "administrative_region_large",
         "string_type": "alphanum",
         "length": [0, 100],
         "required": false,
-        "description": "Largest administrative region (e.g. state, province)"
+        "description": "Largest administrative region (e.g. state, province)",
+        "threshold": 1
     },
-    "municipality": {
+    {
+        "name": "municipality",
         "string_type": "alpha",
         "length": [0, 100],
         "required": false,
-        "description": "Municipality or county"
+        "description": "Municipality or county",
+        "threshold": 1
     },
-    "city": {
+    {
+        "name": "city",
         "string_type": "alpha",
         "length": [0, 100],
         "required": true,
-        "description": "City or town"
+        "description": "City or town",
+        "threshold": 1
     },
-    "administrative_region_small": {
+    {
+        "name": "administrative_region_small",
         "string_type": "alphanum",
         "length": [0, 100],
         "required": false,
-        "description": "Medium administrative region (e.g. district)"
+        "description": "Medium administrative region (e.g. district)",
+        "threshold": 1
     },
-    "zip": {
+    {
+        "name": "zip",
         "string_type": "num",
         "length": [4, 10],
         "required": true,
-        "description": "Postal code or ZIP code"
+        "description": "Postal code or ZIP code",
+        "threshold": 1
     },
-    "street": {
+    {
+        "name": "street_name",
         "string_type": "alphanum",
         "length": [0, 100],
         "required": true,
-        "description": "Street name"
+        "description": "Street name",
+        "threshold": 1
     },
-    "street_number": {
+    {
+        "name": "street_number",
         "string_type": "num",
         "length": [1, 4],
         "required": true,
-        "description": "Street number"
+        "description": "Street number",
+        "threshold": 1
     },
-    "entrance": {
+    {
+        "name": "entrance",
         "string_type": "alphanum",
         "length": [0, 10],
         "required": false,
-        "description": "Entrance number or identifier"
+        "description": "Entrance number or identifier",
+        "threshold": 1
     },
-    "apartment_number": {
+    {
+        "name": "apartment_number",
         "string_type": "alphanum",
         "length": [0, 14],
         "required": false,
-        "description": "Apartment or unit number"
+        "description": "Apartment or unit number",
+        "threshold": 1
     }
-}
+]
