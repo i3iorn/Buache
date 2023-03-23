@@ -1,7 +1,7 @@
 import logging
-from typing import Optional, List
 
-from src import Rule
+from src.declarations import Declaration
+from src.exceptions import ComponentThresholdNotReached, AddressComponentException
 
 
 class AddressComponent:
@@ -10,35 +10,45 @@ class AddressComponent:
 
     :param component_type: The type of the address component, such as 'street', 'city', or 'postal_code'.
     :param value: The value of the address component, such as '123 Main St' or 'New York'.
+    :param index: The components placement in the original string.'.
+    :param score: How confident we are that we are correct.'.
     """
     def __init__(
-        self,
-        value: str,
-        component_type: str,
-        index: int,
-        rules: Optional[List[Rule]] = None
-    ):
+            self,
+            value: str,
+            component_type: str,
+            index: int,
+            score: int
+        ):
 
         self.component_type = component_type
         self.value = value
+        self.index = index
+        self.score = score
 
-    def validate(self) -> bool:
+        try:
+            self.validate()
+        except AddressComponentException as e:
+            raise AddressComponentException(f'Failed to add component: {component_type} with value: {value}') from e
+
+    def validate(self) -> None:
         """
         Validate that the address component has valid data.
 
         :return: True if the component is valid, False otherwise.
         """
-        # TODO: Implement validation logic
         # Example validation:
         if self.value is None or len(self.value.strip()) == 0:
             logging.warning(f"{self.component_type} has no value.")
-            return False
+            raise AddressComponentException(f"{self.component_type} has no value.")
 
         if not self.value.isalnum():
             logging.warning(f"{self.component_type} is not alphanumeric.")
-            return False
+            raise AddressComponentException(f"{self.component_type} is not alphanumeric.")
 
-        return True
+        if self.score < Declaration().read(resource_type='address_component', resource_id=self.component_type).get('threshold', 0):
+            logging.warning(f"{self.component_type} did not reach the threshold set in its declaration.")
+            raise ComponentThresholdNotReached(f"{self.component_type} did not reach the threshold set in its declaration.")
 
     def format(self) -> str:
         """

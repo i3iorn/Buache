@@ -6,9 +6,13 @@ class AddressException(BuacheException):
     pass
 
 
-class ComponentException(AddressException):
+class AddressComponentException(AddressException):
     pass
 
 
-class ComponentNotFound(ComponentException):
+class AddressComponentNotFound(AddressComponentException):
+    pass
+
+
+class ComponentThresholdNotReached(AddressComponentException):
     pass

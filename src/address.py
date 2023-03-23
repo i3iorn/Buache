@@ -2,7 +2,7 @@ from typing import List, Optional
 import logging
 
 from src import AddressComponent
-from src.exceptions import ComponentNotFound
+from src.exceptions import AddressComponentNotFound
 from src.declarations import Declaration
 
 
@@ -48,16 +48,19 @@ class Address:
 
             # Create an empty list to hold scores for each substring
             scores = []
+            score_length = None
 
             # Iterate over each substring in the address string
-            for i in range(len(address_str)):
-                for j in range(i, len(address_str)):
-                    substring = address_str[i:j + 1]
+            while len(scores) != score_length:
+                score_length = len(scores)
+                for i in range(len(address_str)):
+                    for j in range(i, len(address_str)):
+                        substring = address_str[i:j + 1]
 
-                    # Score the substring based on how well it matches the component declaration
-                    score = self._score_component(substring, component_type, component_declaration)
-                    if score > 0:
-                        scores.append((substring, score))
+                        # Score the substring based on how well it matches the component declaration
+                        score = self._score_component(substring, component_type, component_declaration)
+                        if score > 0:
+                            scores.append((substring, score))
 
             if scores:
                 # Sort the scores in descending order
@@ -87,7 +90,7 @@ class Address:
         for component in self.components:
             if component.component_type == component_type:
                 return component
-        raise ComponentNotFound(component_type)
+        raise AddressComponentNotFound(component_type)
 
     def __str__(self) -> str:
         """
