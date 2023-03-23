@@ -1,13 +1,14 @@
 import logging
-from .address import Address, AddressComponent
-from .adapter import Adapter, AuthenticatedAPIAdapter, UnauthenticatedAPIAdapter, FileAdapter, FTPAdapter, HTTPAdapter, LocalAdapter
+from .address import Address
+from .address_component import AddressComponent
+from .adapter import Adapter, AuthenticatedAPIAdapter, UnauthenticatedAPIAdapter, \
+                     FileAdapter, FTPAdapter, HTTPAdapter, LocalAdapter
 from .augmentor import Augmentor
 from .source import Source
 from .rule import Rule
 
 __all__ = [
     'Address',
-    'AddressComponent',
     'Adapter',
     'AuthenticatedAPIAdapter',
     'UnauthenticatedAPIAdapter',
@@ -17,7 +18,8 @@ __all__ = [
     'LocalAdapter',
     'Augmentor',
     'Source',
-    'Rule'
+    'Rule',
+    'AddressComponent'
 ]
 
 # Define custom logging levels
