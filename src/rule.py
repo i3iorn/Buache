@@ -30,46 +30,13 @@ class Rule:
         self.disallowed_substrings = disallowed_substrings or []
         self.custom_match_function = custom_match_function
 
-    def matches(self, address, parts):
+    def evaluate(self, address, components):
         """
         Checks if the rule matches the address.
         :param address: the address to be matched
-        :param parts: a dictionary containing previously identified address parts
+        :param components: a list containing previously identified address components
         :return: True if the rule matches, False otherwise
         """
-        if self.pattern:
-            match = re.search(self.pattern, address, re.IGNORECASE)
-            if not match:
-                return False
-
-        if self.index is not None:
-            address_lines = address.split(", ")
-            if self.index < 0 or self.index >= len(address_lines):
-                return False
-
-        if self.min_length is not None:
-            if len(parts.get(self.name, "")) < self.min_length:
-                return False
-
-        if self.max_length is not None:
-            if len(parts.get(self.name, "")) > self.max_length:
-                return False
-
-        for dependency in self.dependencies:
-            if not parts.get(dependency, ""):
-                return False
-
-        if self.min_value is not None and address < self.min_value:
-            return False
-
-        if self.max_value is not None and address > self.max_value:
-            return False
-
-        if any(substring in address for substring in self.disallowed_substrings):
-            return False
-
-        if self.custom_match_function and not self.custom_match_function(address):
-            return False
 
         return True
 
