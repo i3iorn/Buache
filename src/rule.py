@@ -1,45 +1,78 @@
-import re
+import logging
+import operator
+from typing import List
+
+from src import AddressComponent
+from src.exceptions import InvalidOperatorError, MissingCriteriaError, MissingConstantError
 
 
 class Rule:
+    OPERATORS = {
+        '<': operator.lt,
+        '>': operator.gt,
+        '==': operator.is_
+    }
+
     """
     A class to define a parsing rule.
     """
-
-    def __init__(self, name, pattern=None, index=None, min_length=None, max_length=None,
-                 dependencies=None, allowed_values=None, min_value=None, max_value=None,
-                 disallowed_substrings=None, custom_match_function=None):
+    def __init__(
+            self,
+            name: str,
+            criteria: List[dict]
+    ) -> None:
         """
         Constructor method.
         :param name: the name of the parsed address part
-        :param pattern: a regex pattern for matching the address part
-        :param index: the index of the address line containing the parsed part
-        :param min_length: the minimum length of the address part
-        :param max_length: the maximum length of the address part
-        :param dependencies: a list of other address parts that this part depends on
+        :param criteria: Criteria declaration
+        dictated by the criteria_type.
         """
-        self.name = name
-        self.pattern = pattern
-        self.index = index
-        self.min_length = min_length
-        self.max_length = max_length
-        self.dependencies = dependencies or []
-        self.allowed_values = allowed_values or []
-        self.min_value = min_value
-        self.max_value = max_value
-        self.disallowed_substrings = disallowed_substrings or []
-        self.custom_match_function = custom_match_function
+        self.log = logging.getLogger(__name__)
+        self.name: str = name
+        self.criteria: List[dict] = criteria
 
-    def evaluate(self, address, components):
+    def evaluate(self, index: int, address_substring: str, components: List[AddressComponent]):
         """
         Checks if the rule matches the address.
-        :param address: the address to be matched
+        :param index: start position in full string.
+        :param address_substring: Part of address.
         :param components: a list containing previously identified address components
         :return: True if the rule matches, False otherwise
         """
+        try:
+            for crit in self.criteria:
+                operation_type, op, val2 = crit.values()
+                func_ = self.OPERATORS[op]
 
+                if operation_type in ['index', 'compare']:
+                    val2 = self.value(val2, components)
+                    if val2 is not None:
+                        if operation_type == 'index':
+                            val1 = index
+                        else:
+                            val1 = address_substring
+
+                        if not func_(val1, val2):
+                            return False
+
+        except KeyError as e:
+            raise InvalidOperatorError(f'You tried to use an operator that was not allowed ({e.args}).')
         return True
 
+    def value(self, val, components):
+        if isinstance(val, str):
+            val_component = [c for c in components if c.component_type == self.name]
+
+            if val_component:
+                self.log.trace(f'Getting value for "{val}" in {val_component[0].declaration}')
+                return val_component[0].declaration.get(val)
+            else:
+                return None
+
     @classmethod
-    def from_dict(cls, rule):
-        pass
+    def from_dict(cls, rule_dict):
+        return cls(
+            name=rule_dict.get('name', ValueError),
+            criteria=rule_dict.get('criteria', MissingCriteriaError)
+        )
+
