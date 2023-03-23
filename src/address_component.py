@@ -13,14 +13,16 @@ class AddressComponent:
     :param index: The components placement in the original string.'.
     :param score: How confident we are that we are correct.'.
     """
+
     def __init__(
             self,
             value: str,
             component_type: str,
             index: int,
             score: int
-        ):
+    ):
 
+        self.declaration = Declaration.read(resource_type='address_component', resource_id=component_type)[0]
         self.component_type = component_type
         self.value = value
         self.index = index
@@ -45,10 +47,20 @@ class AddressComponent:
         if not self.value.isalnum():
             logging.warning(f"{self.component_type} is not alphanumeric.")
             raise AddressComponentException(f"{self.component_type} is not alphanumeric.")
+        else:
+            if self.declaration.get('string_type') == 'alpha':
+                if not self.value.isalpha():
+                    logging.warning(f"{self.component_type} is supposed to be letters only.")
+                    raise AddressComponentException(f"{self.component_type} is supposed to be letters only.")
+            elif self.declaration.get('string_type') == 'num':
+                if not self.value.isnumeric():
+                    logging.warning(f"{self.component_type} is supposed to be digits only.")
+                    raise AddressComponentException(f"{self.component_type} is supposed to be digits only.")
 
-        if self.score < Declaration().read(resource_type='address_component', resource_id=self.component_type).get('threshold', 0):
+        if self.score < self.declaration.get('threshold', 0):
             logging.warning(f"{self.component_type} did not reach the threshold set in its declaration.")
-            raise ComponentThresholdNotReached(f"{self.component_type} did not reach the threshold set in its declaration.")
+            raise ComponentThresholdNotReached(
+                f"{self.component_type} did not reach the threshold set in its declaration.")
 
     def format(self) -> str:
         """
