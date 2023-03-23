@@ -1,4 +1,7 @@
-import logging
+import json
+import logging.config
+from pathlib import Path
+
 from .address import Address
 from .address_component import AddressComponent
 from .adapter import Adapter, AuthenticatedAPIAdapter, UnauthenticatedAPIAdapter, \
@@ -23,20 +26,20 @@ __all__ = [
 ]
 
 # Define custom logging levels
-logging.VERBOSE = 15
-logging.TRACE = 5
+new_levels = {
+    'VERBOSE': 15,
+    'TRACE': 5
+}
 
+for name, level in new_levels.items():
+    logging.addLevelName(level, name.upper())
+    logging.addLevelName(level, name.lower())
 
-# Define trace and verbose methods on Logger class
-def logger_trace(self, message, *args, **kwargs):
-    if self.isEnabledFor(logging.TRACE):
-        self._log(logging.TRACE, message, args, **kwargs)
+    def function(self, message, *args, **kwargs):
+        if self.isEnabledFor(level):
+            self._log(level, message, args, **kwargs)
 
+    setattr(logging.Logger, name.lower(), function)
 
-def logger_verbose(self, message, *args, **kwargs):
-    if self.isEnabledFor(logging.VERBOSE):
-        self._log(logging.VERBOSE, message, args, **kwargs)
-
-
-logging.Logger.trace = logger_trace
-logging.Logger.verbose = logger_verbose
+with open(Path('config/log.config').absolute(), 'r') as log_config:
+    logging.config.dictConfig(json.load(log_config))
