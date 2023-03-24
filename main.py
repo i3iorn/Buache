@@ -1,4 +1,5 @@
-from v2.rule import Parser
+from v2 import Config
+from v2.rule import Parser, Rule
 
-p = Parser.load()
-print(p)
+
+print(Config.countries())

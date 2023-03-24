@@ -1,0 +1,190 @@
+[
+    {
+        "name": "apartment_number",
+        "aliases": ["apartment", "apt", "unit", "suite"],
+        "data_type": "string",
+        "description": "The number or letter that identifies a specific apartment in a building.",
+        "examples": {
+            "Sweden": ["Lgh 1102", "Lägenhet 14", "1201"],
+            "US": ["Apt 123", "Unit 4B"],
+            "Spain": ["Piso 2", "Apartamento B"]
+        }
+    },
+    {
+        "name": "floor",
+        "aliases": ["level", "story"],
+        "data_type": "string",
+        "description": "The floor number of the building.",
+        "examples": {
+            "Sweden": ["3 tr", "Våning 6"],
+            "US": ["3rd floor", "6th floor"],
+            "Spain": ["Planta 2", "Segundo Piso"]
+        }
+    },
+    {
+        "name": "entrance",
+        "aliases": ["entr", "ent", "entry"],
+        "data_type": "string",
+        "description": "The entrance number or letter of the building.",
+        "examples": {
+            "Sweden": ["B porten", "Ingång C"],
+            "US": ["Entrance 2", "Entry D"],
+            "Spain": ["Entrada A", "Portal B"]
+        }
+    },
+    {
+        "name": "building",
+        "aliases": ["bldg", "building name"],
+        "data_type": "string",
+        "description": "The name or identifier of the building.",
+        "examples": {
+            "Sweden": ["Kronhuset", "Kungsladugård"],
+            "US": ["Empire State Building", "Rockefeller Center"],
+            "Spain": ["Torre Picasso", "Edificio España"]
+        }
+    },
+    {
+        "name": "street_number",
+        "aliases": ["street num", "street no"],
+        "data_type": "string",
+        "description": "The number or letter that identifies a specific building or location on a street.",
+        "examples": {
+            "Sweden": ["1", "27B"],
+            "US": ["1600", "1100A"],
+            "Spain": ["25", "25B"]
+        }
+    },
+    {
+        "name": "street_name",
+        "aliases": ["street", "st name"],
+        "data_type": "string",
+        "description": "The name of the street.",
+        "examples": {
+            "Sweden": ["Storgatan", "Vasagatan"],
+            "US": ["Broadway", "Main Street"],
+            "Spain": ["Gran Vía", "Calle Mayor"]
+        }
+    },
+    {
+        "name": "street_suffix",
+        "aliases": ["st suffix", "st type"],
+        "data_type": "string",
+        "description": "The suffix or type of the street, such as 'street', 'avenue', or 'road'.",
+        "examples": {
+            "Sweden": ["gatan", "vägen"],
+            "US": ["St", "Ave"],
+            "Spain": ["Calle", "Avenida"]
+        }
+    },
+    {
+        "name": "block",
+        "aliases": [],
+        "data_type": "string",
+        "description": "A group of buildings or a subdivision of a neighborhood.",
+        "examples": {
+            "Sweden": ["A3", "C7"],
+            "US": ["Block 12", "Block 3"],
+            "Spain": ["Bloque 1", "Bloque 2"]
+        }
+    },
+    {
+        "name": "postal_code",
+        "aliases": ["zip_code", "postcode"],
+        "data_type": "string",
+        "description": "A series of letters or digits appended to a postal address for the purpose of sorting mail.",
+        "examples": {
+            "Sweden": ["114 33", "171 73"],
+            "US": ["90210", "10001"],
+            "Spain": ["28001", "08003"]
+        }
+    },
+    {
+        "name": "administrative_region_small",
+        "aliases": ["district", "ward", "county"],
+        "data_type": "string",
+        "description": "A smaller administrative division within a larger region.",
+        "examples": {
+            "Sweden": ["Norrmalm", "Kungsholmen"],
+            "US": ["Brooklyn", "Suffolk County"],
+            "Spain": ["Ciutat Vella", "Sarrià-Sant Gervasi"]
+        }
+    },
+    {
+        "name": "city",
+        "aliases": ["locality"],
+        "data_type": "string",
+        "description": "A large town or urban area.",
+        "examples": {
+            "Sweden": ["Stockholm", "Malmö"],
+            "US": ["New York City", "Los Angeles"],
+            "Spain": ["Barcelona", "Madrid"]
+        }
+    },
+    {
+        "name": "administrative_region_medium",
+        "aliases": ["province", "state", "region"],
+        "data_type": "string",
+        "description": "A medium-sized administrative division within a country.",
+        "examples": {
+            "Sweden": ["Stockholm County", "Västra Götaland County"],
+            "US": ["California", "Florida"],
+            "Spain": ["Andalusia", "Catalonia"]
+        }
+    },
+    {
+        "name": "municipality",
+        "aliases": [],
+        "data_type": "string",
+        "description": "A local government unit in a country.",
+        "examples": {
+            "Sweden": ["Stockholm Municipality", "Malmö Municipality"],
+            "US": ["New York City", "Los Angeles"],
+            "Spain": ["Barcelona", "Madrid"]
+        }
+    },
+    {
+        "name": "administrative_region_large",
+        "aliases": [
+            "country_region",
+            "state_province"
+        ],
+        "data_type": "string",
+        "description": "A larger administrative division within a country.",
+        "examples": {
+            "Sweden": [
+                "Götaland",
+                "Svealand"
+            ],
+            "US": [
+                "Midwest",
+                "Northeast"
+            ],
+            "Spain": [
+                "Andalusia",
+                "Catalonia"
+            ]
+        }
+    },
+    {
+        "name": "country",
+        "aliases": ["Country"],
+        "data_type": "string",
+        "description": "The name of the country",
+        "examples": {
+            "Sweden": ["Sverige"],
+            "US": ["USA"],
+            "Spain": ["España"]
+        }
+    },
+    {
+        "name": "continent",
+        "aliases": ["Continent"],
+        "data_type": "string",
+        "description": "The name of the continent",
+        "examples": {
+            "Sweden": ["Europa"],
+            "US": ["North America"],
+            "Spain": ["Europa"]
+        }
+    }
+  ]

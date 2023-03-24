@@ -1,16 +1,21 @@
 import os
+import json
+import logging.config
 from pathlib import Path
 
 os.environ['ROOT'] = Path(__file__).absolute().parent.__str__()
 
-import json
-import logging.config
+from .rule import Rule, Parser
+from .config import Config
+
 """
 Remember to add all new classes to __all__
 """
 
 __all__ = [
-
+    'Rule',
+    'Config',
+    'Parser'
 ]
 
 # Define custom logging levels
@@ -24,9 +29,11 @@ for name, level in new_levels.items():
     logging.addLevelName(level, name.upper())
     logging.addLevelName(level, name.lower())
 
+
     def function(self, message, *args, **kwargs):
         if self.isEnabledFor(level):
             self._log(level, message, args, **kwargs)
+
 
     setattr(logging.Logger, name.lower(), function)
 

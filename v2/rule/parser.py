@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 from typing import Optional, List, Tuple, Any
 
-from v2.config import ROOT
+from v2.config import ROOT_PATH
 
 
 class Parser:
@@ -23,7 +23,7 @@ class Parser:
       filters and returns only the rules that match the flags labels in the filter.
 
     """
-    PATH_TO_RULES = Path(f'{ROOT}/rule/rules.json')
+    PATH_TO_RULES = Path(f'{ROOT_PATH}/rule/rules.json')
 
     def __init__(self, name: str, description: str, flags: List[str], criteria: List[dict]) -> None:
         """
@@ -60,7 +60,7 @@ class Parser:
 
         self.save(rules)
 
-    def save(self, rules: Any[List['Parser'], List[dict]]) -> None:
+    def save(self, rules: [List["Parser"], List[dict]]) -> None:
         if isinstance(rules[0], dict):
             pass
         elif isinstance(rules[0], Parser):

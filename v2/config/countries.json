@@ -1,0 +1,15 @@
+[
+  {
+    "name": "Sweden",
+    "code": "SE",
+    "default_address": [
+      "street_name",
+      "street_number",
+      "entrance",
+      "apartment_number",
+      "postal_code",
+      "city",
+      "country"
+    ]
+  }
+]
