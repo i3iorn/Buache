@@ -2,8 +2,8 @@ import logging
 import operator
 from typing import List
 
-from src import AddressComponent
-from src.exceptions import InvalidOperatorError, MissingCriteriaError, MissingConstantError
+from v1 import AddressComponent
+from v1.exceptions import InvalidOperatorError, MissingCriteriaError, MissingConstantError
 
 
 class Rule:

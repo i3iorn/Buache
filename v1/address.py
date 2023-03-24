@@ -1,11 +1,11 @@
 import logging
 from typing import List, Optional, TYPE_CHECKING
-from src.exceptions import AddressComponentNotFound, MissingRuleDeclarationForComponent, \
+from v1.exceptions import AddressComponentNotFound, MissingRuleDeclarationForComponent, \
     ToManyRulesDeclaredForComponent, AddressComponentException, AmbiguousScoresException
-from src.declarations import Declaration
+from v1.declarations import Declaration
 
 if TYPE_CHECKING:
-    from src import AddressComponent, Rule
+    from v1 import AddressComponent, Rule
 
 
 class Address:
@@ -34,8 +34,8 @@ class Address:
         :param component_type: The component type to read.
         :return: A tuple of the component declaration and rule.
         """
-        from src.declarations import Declaration
-        from src import Rule
+        from v1.declarations import Declaration
+        from v1 import Rule
 
         rule_dict = Declaration.read("rule", component_type)
 
@@ -96,27 +96,27 @@ class Address:
 
                 self.log.trace(f"Iterate over each substring in the address string")
                 for i in range(len(address_str)):
-                    for j in range(i, len(address_str)):
-                        if lengths[0] <= j <= lengths[1]:
-                            substring = address_str[i:j + 1]
+                    try:
+                        for j in range(i, len(address_str)):
+                            if lengths[0] <= j <= lengths[1]:
+                                substring = address_str[i:j + 1]
 
-                            # Score the substring based on how well it matches the component declaration
-                            self.log.trace(f"Calculate score for '{substring}' against {component_type} rules.")
-                            self.log.trace(f"Applicable rules are {rule.criteria}")
-                            score = self._score_component(i, component_type, rule, parsed_components)
-                            if score > 0:
-                                scores.append((substring, score, i))
+                                # Score the substring based on how well it matches the component declaration
+                                self.log.trace(f"Calculate score for '{substring}' against {component_type} rules.")
+                                self.log.trace(f"Applicable rules are {rule.criteria}")
+                                score = self._score_component(i, component_type, rule, parsed_components)
+                                if score > 0:
+                                    scores.append((substring, score, i))
 
-                        try:
-                            if scores:
-                                self.log.debug(f'Generated {len(scores)} scores')
-                                best_component = self._process_scores(scores, component_type)
+                                if scores:
+                                    self.log.debug(f'Generated {len(scores)} scores')
+                                    best_component = self._process_scores(scores, component_type)
 
-                                if best_component is not None:
-                                    self.log.debug(f'The best component was considered {best_component.component_type} for "{best_component.value}"')
-                                    parsed_components.append(best_component)
-                        except AmbiguousScoresException as e:
-                            self.log.debug(f'Moving on to next substring since this one gives unclear results.')
+                                    if best_component is not None:
+                                        self.log.debug(f'The best component was considered {best_component.component_type} for "{best_component.value}"')
+                                        parsed_components.append(best_component)
+                    except AmbiguousScoresException as e:
+                        self.log.debug(f'Moving on to next substring since this one gives unclear results.')
 
             except MissingRuleDeclarationForComponent as e:
                 self.log.warning(f'There are no rules declared for {component_type}', exc_info=e)
@@ -137,7 +137,7 @@ class Address:
         raise AddressComponentNotFound(component_type)
 
     def _process_scores(self, scores, component_type):
-        from src import AddressComponent
+        from v1 import AddressComponent
         # Sort the scores in descending order
         scores.sort(key=lambda x: x[1], reverse=True)
 
@@ -145,7 +145,7 @@ class Address:
         # the next highest-scoring substring. If not, then there is ambiguity, and we cannot determine the
         # correct value.
         value = None
-        if len(scores) == 0:
+        if len(scores) == 1:
             value = scores[0][0]
         elif scores[0][1] > scores[1][1]:
             # The highest-scoring substring is unambiguous, so add it to the list of parsed components

@@ -1,11 +1,12 @@
+import os
 import json
 import logging
 from pathlib import Path
 
 
 class Declaration:
-    PATH = "declarations/{}_declaration.json"
-    log = logging.getLogger('src.declaration')
+    PATH = "/declarations/{}_declaration.json"
+    log = logging.getLogger('v1.declaration')
     
     @classmethod
     def create(cls, resource_type: str, resource_data: dict):
@@ -19,7 +20,7 @@ class Declaration:
 
     @classmethod
     def read(cls, resource_type: str, resource_id=None):
-        path = Path(cls.PATH.format(resource_type)).absolute()
+        path = Path(f"{os.getenv('ROOT')}{cls.PATH.format(resource_type)}").absolute()
         with open(path, "r") as f:
             declarations = json.load(f)
         if resource_id:

@@ -1,0 +1,59 @@
+[
+  {
+    "name": "street_name",
+    "description": "The main part of a street name excluding suffixes like 'street', 'ave', 'road'",
+    "flags": ["specific_to_country", "same_as_street_name"],
+    "criteria": [
+      {
+        "type": "length",
+        "required": true,
+        "score": 1,
+        "min": 2,
+        "max": 30
+      },
+      {
+        "type": "string_type",
+        "required": true,
+        "string_type": "alpha"
+      }
+    ]
+  },
+  {
+    "name": "street_full_name",
+    "description": "Full street name including suffixes but not including number.",
+    "flags": ["specific_to_country", "same_as_street_name"],
+    "criteria": [
+      {
+        "type": "length",
+        "min": 4,
+        "max": 60,
+        "required": true,
+        "score": 1
+      },
+      {
+        "type": "string_type",
+        "required": true,
+        "string_type": "alpha"
+      }
+    ]
+  },
+  {
+    "name": "street_suffix",
+    "description": "Suffixes like 'street', 'ave', 'road'.",
+    "flags": ["specific_to_country", "same_as_street_name"],
+    "criteria": [
+      {
+        "type": "length",
+        "required": true,
+        "score": 1,
+        "min": 2,
+        "max": 12,
+      },
+      {
+        "type": "string_type",
+        "required": true,
+        "string_type": "alpha"
+      }
+    ]
+  }
+]

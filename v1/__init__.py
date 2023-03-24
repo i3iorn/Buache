@@ -1,5 +1,6 @@
 import json
 import logging.config
+import os
 from pathlib import Path
 
 from .address import Address
@@ -9,6 +10,8 @@ from .adapter import Adapter, AuthenticatedAPIAdapter, UnauthenticatedAPIAdapter
 from .augmentor import Augmentor
 from .source import Source
 from .rule import Rule
+
+os.environ['ROOT'] = Path(__file__).absolute().parent.__str__()
 
 __all__ = [
     'Address',
@@ -41,5 +44,5 @@ for name, level in new_levels.items():
 
     setattr(logging.Logger, name.lower(), function)
 
-with open(Path('config/log.config').absolute(), 'r') as log_config:
+with open(Path(f'{os.getenv("ROOT")}/config/log.config').absolute(), 'r') as log_config:
     logging.config.dictConfig(json.load(log_config))

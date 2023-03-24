@@ -1,7 +1,7 @@
 import logging
 
-from src.declarations import Declaration
-from src.exceptions import ComponentThresholdNotReached, AddressComponentException
+from v1.declarations import Declaration
+from v1.exceptions import ComponentThresholdNotReached, AddressComponentException
 
 
 class AddressComponent:

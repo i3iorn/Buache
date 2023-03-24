@@ -1,6 +1,4 @@
-from src import Address
+from v2.rule import Parser
 
-address = Address()
-address.parse_address('Danagränd 7 lgh 1001 17566 Järfälla')
-
-print(str(address))
+p = Parser.load()
+print(p)
