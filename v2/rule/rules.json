@@ -1,45 +1,51 @@
 [
-  {
-    "name": "street_name",
-    "flags": ["specific_to_country"],
-    "criteria": [
-      {
-        "type": "length",
-        "required": true,
-        "score": 5,
-        "min": 2,
-        "max": 30
-      },
-      {
-        "type": "position",
-        "before": ["street_number"],
-        "required": false,
-        "score": 1
-      },
-      {
-        "type": "string_type",
-        "string_type": "alpha",
-        "required": false,
-        "score": 2
-      }
-    ]
-  },
-  {
-    "name": "street_suffix",
-    "flags": ["specific_to_country"],
-    "criteria": [
-      {
-        "type": "length",
-        "required": true,
-        "score": 1,
-        "min": 2,
-        "max": 12
-      },
-      {
-        "type": "string_type",
-        "required": true,
-        "string_type": "alpha"
-      }
-    ]
-  }
+    {
+        "name": "street_name",
+        "flags": [
+            "specific_to_country"
+        ],
+        "criteria": [
+            {
+                "type": "length",
+                "required": true,
+                "score": 5,
+                "min": 2,
+                "max": 30
+            },
+            {
+                "type": "position",
+                "before": [
+                    "street_number"
+                ],
+                "required": false,
+                "score": 1
+            },
+            {
+                "type": "string_type",
+                "string_type": "alpha",
+                "required": false,
+                "score": 2
+            }
+        ]
+    },
+    {
+        "name": "street_suffix",
+        "flags": [
+            "specific_to_country"
+        ],
+        "criteria": [
+            {
+                "type": "length",
+                "required": true,
+                "score": 1,
+                "min": 2,
+                "max": 12
+            },
+            {
+                "type": "string_type",
+                "required": true,
+                "string_type": "alpha"
+            }
+        ]
+    }
 ]

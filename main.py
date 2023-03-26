@@ -1,5 +1,9 @@
-from v2 import Config
-from v2.rule import Parser, Rule
+import unittest
+
+from v2 import rule
+from v2.test import TestRule, TestParser
+
+app = rule.parser.Parser.load()
 
 
-print(Config.countries())
+unittest.main()
