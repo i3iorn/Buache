@@ -3,10 +3,12 @@ import json
 import logging.config
 from pathlib import Path
 
+
 os.environ['ROOT'] = Path(__file__).absolute().parent.__str__()
 
-from .rule import Rule, Parser
 from .config import Config
+from .rule import Rule
+from .address_component import AddressComponent
 
 """
 Remember to add all new classes to __all__
@@ -15,7 +17,7 @@ Remember to add all new classes to __all__
 __all__ = [
     'Rule',
     'Config',
-    'Parser'
+    'AddressComponent'
 ]
 
 # Define custom logging levels

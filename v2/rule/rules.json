@@ -2,27 +2,25 @@
     {
         "name": "street_name",
         "flags": [
-            "specific_to_country"
+            "street_number"
         ],
         "criteria": [
             {
                 "type": "length",
                 "required": true,
-                "score": 5,
                 "min": 2,
                 "max": 30
             },
             {
                 "type": "position",
-                "before": [
+                "gt": [
                     "street_number"
                 ],
-                "required": false,
-                "score": 1
+                "required": false
             },
             {
                 "type": "string_type",
-                "string_type": "alpha",
+                "string_type": "isalpha",
                 "required": false,
                 "score": 2
             }
@@ -31,20 +29,68 @@
     {
         "name": "street_suffix",
         "flags": [
-            "specific_to_country"
         ],
         "criteria": [
             {
                 "type": "length",
                 "required": true,
-                "score": 1,
                 "min": 2,
                 "max": 12
             },
             {
                 "type": "string_type",
                 "required": true,
-                "string_type": "alpha"
+                "string_type": "isalpha"
+            }
+        ]
+    },
+    {
+        "name": "street_number",
+        "flags": [
+            "street_name"
+        ],
+        "criteria": [
+            {
+                "type": "length",
+                "required": true,
+                "min": 0,
+                "max": 3
+            },
+            {
+                "type": "number",
+                "required": true,
+                "min": 0,
+                "max": 800
+            },
+            {
+                "type": "string_type",
+                "required": true,
+                "string_type": "isnumeric"
+            }
+        ]
+    },
+    {
+        "name": "postal_code",
+        "flags": [
+            "city"
+        ],
+        "criteria": [
+            {
+                "type": "length",
+                "required": true,
+                "min": 4,
+                "max": 12
+            },
+            {
+                "type": "number",
+                "required": true,
+                "min": 1000,
+                "max": 999999
+            },
+            {
+                "type": "string_type",
+                "required": true,
+                "string_type": "isnumeric"
             }
         ]
     }

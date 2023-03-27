@@ -29,6 +29,12 @@ class RuleException(BuacheException):
 class ConditionalException(RuleException):
     pass
 
+class CriteriaTypeError(RuleException):
+    pass
+
+class EvaluationException(RuleException):
+    pass
+
 
 class MissingCriteriaError(RuleException):
     pass
