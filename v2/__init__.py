@@ -3,21 +3,16 @@ import json
 import logging.config
 from pathlib import Path
 
-
 os.environ['ROOT'] = Path(__file__).absolute().parent.__str__()
 
-from .config import Config
-from .rule import Rule
-from .address_component import AddressComponent
+from v2.config import Config
 
 """
 Remember to add all new classes to __all__
 """
 
 __all__ = [
-    'Rule',
     'Config',
-    'AddressComponent'
 ]
 
 # Define custom logging levels
@@ -36,16 +31,14 @@ for name, level in new_levels.items():
         if self.isEnabledFor(level):
             self._log(level, message, args, **kwargs)
 
-
     setattr(logging.Logger, name.lower(), function)
 
-try:
-    config_folder = Path(f'{os.getenv("ROOT")}/config').absolute()
-    config_folder.mkdir(exist_ok=True)
 
-    config_file = Path(f'{os.getenv("ROOT")}/config/log.config').absolute()
+config_folder = Path(f'{os.getenv("ROOT")}/config').absolute()
+config_folder.mkdir(exist_ok=True)
 
-    with open(f'{config_folder}', 'r') as log_config:
-        logging.config.dictConfig(json.load(log_config))
-except PermissionError as e:
-    print(e)
+config_file = Path(f'{os.getenv("ROOT")}/config/log.config').absolute()
+
+with open(f'{config_file}', 'r') as log_config:
+    logging.config.dictConfig(json.load(log_config))
+

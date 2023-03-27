@@ -1,60 +1,81 @@
 [
     {
         "name": "street_name",
+        "min": 4,
+        "max": 30,
         "flags": [
             "street_number"
         ],
         "criteria": [
             {
-                "type": "length",
-                "required": true,
-                "min": 2,
-                "max": 30
+                "type": "position",
+                "lt": [
+                    "street_number"
+                ],
+                "required": false
             },
             {
+                "type": "startswith",
+                "required": true,
+                "primary": true
+            },
+            {
+                "type": "string_type",
+                "string_type": "isalpha",
+                "required": true
+            }
+        ]
+    },
+    {
+        "name": "street_suffix",
+        "min": 2,
+        "max": 16,
+        "flags": [
+        ],
+        "criteria": [
+            {
                 "type": "position",
-                "gt": [
+                "lt": [
+                    "postal_code",
+                    "city",
                     "street_number"
                 ],
                 "required": false
             },
             {
                 "type": "string_type",
-                "string_type": "isalpha",
-                "required": false,
-                "score": 2
-            }
-        ]
-    },
-    {
-        "name": "street_suffix",
-        "flags": [
-        ],
-        "criteria": [
-            {
-                "type": "length",
-                "required": true,
-                "min": 2,
-                "max": 12
-            },
-            {
-                "type": "string_type",
                 "required": true,
                 "string_type": "isalpha"
+            },
+            {
+                "type": "endswith",
+                "required": true,
+                "primary": true
+            },
+            {
+                "type": "notequal",
+                "required": true
             }
         ]
     },
     {
         "name": "street_number",
+        "min": 1,
+        "max": 3,
         "flags": [
             "street_name"
         ],
         "criteria": [
             {
-                "type": "length",
-                "required": true,
-                "min": 0,
-                "max": 3
+                "type": "position",
+                "gt": [
+                    "street_name"
+                ],
+                "lt": [
+                    "postal_code",
+                    "city"
+                ],
+                "required": false
             },
             {
                 "type": "number",
@@ -66,20 +87,37 @@
                 "type": "string_type",
                 "required": true,
                 "string_type": "isnumeric"
+            },
+            {
+                "type": "startswith",
+                "required": true,
+                "primary": true
             }
         ]
     },
     {
         "name": "postal_code",
+        "min": 4,
+        "max": 12,
         "flags": [
             "city"
         ],
         "criteria": [
             {
-                "type": "length",
+                "type": "position",
+                "gt": [
+                    "street_number",
+                    "street_name"
+                ],
+                "lt": [
+                    "city"
+                ],
+                "required": false
+            },
+            {
+                "type": "startswith",
                 "required": true,
-                "min": 4,
-                "max": 12
+                "primary": true
             },
             {
                 "type": "number",
@@ -91,6 +129,34 @@
                 "type": "string_type",
                 "required": true,
                 "string_type": "isnumeric"
+            }
+        ]
+    },
+    {
+        "name": "city",
+        "min": 3,
+        "max": 30,
+        "flags": [
+        ],
+        "criteria": [
+            {
+                "type": "position",
+                "gt": [
+                    "postal_code",
+                    "street_name",
+                    "street_number"
+                ],
+                "required": false
+            },
+            {
+                "type": "startswith",
+                "required": true,
+                "primary": true
+            },
+            {
+                "type": "string_type",
+                "required": true,
+                "string_type": "isalpha"
             }
         ]
     }

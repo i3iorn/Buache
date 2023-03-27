@@ -39,7 +39,7 @@ class Parser:
     """
     PATH_TO_RULES = Path(f'{ROOT_PATH}/rule/rules.json')
 
-    def __init__(self, name: str, flags: List[str], criteria: List[dict]) -> None:
+    def __init__(self, name: str, flags: List[str], criteria: List[dict], **kwargs) -> None:
         """
         Initializes a new Parser object with the given name, description, flags, and criteria.
         """
@@ -61,7 +61,7 @@ class Parser:
         - A dictionary representing the Parser object, with keys 'name', 'flags', and 'criteria',
           and their respective values.
         """
-        self.log.trace(f'Returning a dictionary representation of the the Rule.')
+        self.log.trace(f'Returning a dictionary representation of the Rule.')
         return {
             'name': self.name,
             'flags': self.flags,
@@ -89,7 +89,10 @@ class Parser:
         self.save(rules)
 
     @classmethod
-    def load(cls, name: Optional[str] = None, rfilter: Optional[List[str]] = None) -> List[dict]:
+    def load(cls,
+             name: Optional[str] = None,
+             rfilter: Optional[List[str]] = None
+             ) -> List[dict]:
         """
         Loads rules from a JSON file, creates a list of Parser objects and returns it. If 'name' is
         provided, filters and returns only the rule with that name. If 'rfilter' is provided,

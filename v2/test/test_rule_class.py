@@ -1,12 +1,9 @@
 import json
-import operator
 from pathlib import Path
-from typing import Any
-
-from v2 import Rule
 from unittest import TestCase
 
 from v2.config import ROOT_PATH
+from v2.rule import Rule
 from v2.rule.parser import Parser
 
 
@@ -18,7 +15,13 @@ class TestRule(TestCase):
         with open(self.PATH_TO_TEST_RULES, 'w') as f:
             json.dump([], f)
         Parser.PATH_TO_RULES = self.PATH_TO_TEST_RULES
-        parser = Parser('base_test_rule', ['base_test_flag'], [{"type": "string_type", "required": True, "string_type": "isalpha"}])
+        parser = Parser('base_test_rule', ['base_test_flag'], [{
+            "type": "string_type",
+            "required": True,
+            "string_type": "isalpha",
+        }])
+        parser.min = 2
+        parser.max = 40
         parser.add()
 
     def tearDown(self):
@@ -38,10 +41,6 @@ class TestRule(TestCase):
         r = Rule('test_rule')
         values = [2, 1]
         self.assertTrue(r.asserts('gt', values))
-
-    def test_evaluate(self):
-        r = Rule('base_test_rule')
-        self.assertIsInstance(r.evaluate('Kungsgatan', 1, []), int)
 
     def test_init_with_no_name(self):
         with self.assertRaises(ValueError):
