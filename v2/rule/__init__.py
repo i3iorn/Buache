@@ -169,13 +169,13 @@ class Rule:
                 matched_criteria.append('startswith')
 
             elif criterion_type == 'notequal':
-                score += self._evaluate_notequal(address_component_value, criterion, compare_to)
+                score += self._evaluate_notequal(address_component_value, compare_to, criterion)
                 matched_criteria.append('notequal')
 
             else:
                 raise CriteriaTypeError(f'"{criterion_type}" is an invalid criteria type.', criterion_type)
 
-        self._evaluate_word_match(address_component_value, word, score, criterion)
+            self._evaluate_word_match(address_component_value, word, score, criterion)
 
         final_score = score / num_criteria
 
@@ -244,7 +244,7 @@ class Rule:
 
         return score
 
-    def _evaluate_string_type(self, address_component_value, criterion) -> Tuple[float, bool]:
+    def _evaluate_string_type(self, address_component_value, criterion) -> float:
         """
         Evaluate a criterion of type "string_type" against an address component value.
 
@@ -267,9 +267,7 @@ class Rule:
             criterion_met = address_component_value.isnumeric()
 
         # Calculate score based on criterion_met
-        score = self.calculate_score(criterion, criterion_met)
-
-        return score
+        return self.calculate_score(criterion, criterion_met)
 
     def _evaluate_endswith(self, address_component_value: str, criterion: dict, word: str) -> float:
         """
