@@ -1,6 +1,6 @@
+import v3 as app
 import unittest
-from pprint import pprint
-from v3.address_parser import AddressParser
+from v3.address.parser import AddressParser
 
 ap = AddressParser()
 addresses = [
@@ -21,7 +21,6 @@ addresses = [
 
 for address in addresses:
     print(address)
-    for component in ap.parse_address(address):
-        print(component.__dict__)
+    ap_list = ap.parse_address(address)
 
 unittest.main()

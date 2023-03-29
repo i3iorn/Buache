@@ -1,4 +1,3 @@
-import re
 from enum import Enum, auto
 
 
@@ -22,13 +21,7 @@ class AddressComponent:
         self.component_type = component_type
         self.component_value = component_value
         self.confidence = confidence
-        """
-                if component_type == AddressComponentType.STREET_NAME:
-                    self.confidence /= (1+(0.5 / (position + 1)))
-        
-                if component_type == AddressComponentType.CITY:
-                    self.confidence *= (1 + (0.5 / (position + 1)))
-        """
+
     @property
     def component_type(self) -> AddressComponentType:
         return self._component_type

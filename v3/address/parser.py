@@ -1,22 +1,25 @@
-import math
+import logging
 import re
-from pprint import pprint
 
 import langdetect
-from .address_parser_helpers import AddressParserHelperClass
+from .helpers import AddressParserHelperClass
 from typing import List
-from .address_component import AddressComponent, AddressComponentType
-from .exceptions import AddressTokenizationException, ComponentEvaluationException, MissingAddressComponentEvaluation, \
+from v3.address.component import AddressComponent, AddressComponentType
+from v3.exceptions import AddressTokenizationException, ComponentEvaluationException, MissingAddressComponentEvaluation, \
     InconclusiveEvaluationException
 
 
 class AddressParser:
-    def __init__(self, ml: bool = False):
+    def __init__(self, ml: bool = False, country: str = None):
+        self.log = logging.getLogger(__name__)
+        self.log.info(f'Log level: {self.log.getEffectiveLevel()}')
         if ml:
-            from .ml_address_parser import MLAddressParser
+            from .ml_parser import MLAddressParser
             self.ml = MLAddressParser()
         else:
             self.ml = None
+
+        self.country = country
 
     def parse_address(self, input_address: str) -> List[AddressComponent]:
         normalized_address = self.normalize_address(input_address)
@@ -34,6 +37,9 @@ class AddressParser:
 
         except AttributeError as e:
             raise AddressTokenizationException
+
+        if self.country is None:
+            self.country = self.detect_language(input_address)
 
         if self.ml:
             return self.ml.parse_address(input_address)
@@ -88,9 +94,14 @@ class AddressParser:
                     ) from e
 
                 try:
-                    evaluated_components[component_type][component] = function(component, components.get(component))
+                    evaluated_components[component_type][component] = function(
+                        self=AddressParserHelperClass,
+                        token=component,
+                        position=components.get(component),
+                        full_address=input_address
+                    )
                 except InconclusiveEvaluationException as e:
-                    print(f"Can't say if {component} is a {component_type}")
+                    self.log.debug(f"Can't say if {component} is a {component_type}")
 
         for component_type, item in evaluated_components.items():
             for component_value, valuation in item.items():
