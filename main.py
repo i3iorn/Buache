@@ -1,8 +1,6 @@
-import v3 as app
+from src import run
 import unittest
-from v3.address.parser import AddressParser
 
-ap = AddressParser()
 addresses = [
     "1600 Pennsylvania Ave NW, Washington, DC 20500, United States",
     "10 Downing Street, Westminster, London SW1A 2AA, United Kingdom",
@@ -19,8 +17,7 @@ addresses = [
     "Oxbacksgatan 3 lgh 1213 72461	Västerås"
 ]
 
-for address in addresses:
-    print(address)
-    ap_list = ap.parse_address(address)
+app = run(mode='DEVELOPMENT')
+app.address(addresses[0])
 
 unittest.main()

@@ -1,4 +1,16 @@
-class AddressException(Exception):
+class ApplicationError(Exception):
+    pass
+
+
+class ConfigurationError(ApplicationError):
+    pass
+
+
+class AddressException(ApplicationError):
+    pass
+
+
+class NormalizationError(AddressException):
     pass
 
 

@@ -2,7 +2,7 @@ import logging
 import math
 from typing import List, Tuple, Optional
 
-from v3.exceptions import InconclusiveEvaluationException
+from src.exceptions import InconclusiveEvaluationException
 
 
 class AddressHeuristics:
@@ -30,6 +30,8 @@ class AddressHeuristics:
         def function() -> Tuple:
             return kwargs.get('operation')(*kwargs.get('values')), kwargs.get('multiplier')
 
+        self.log.trace(f"Add boolean check for: {kwargs.get('operation')}. Using values: {kwargs.get('values')}")
+        self.log.trace(f"Multiplier for check is: {kwargs.get('multiplier')}")
         self.heuristics.append(function)
 
     def add_count(self, **kwargs) -> None:
@@ -50,6 +52,12 @@ class AddressHeuristics:
             score = 1 + (count * kwargs.get('multiplier'))
 
             return result, score
+
+        self.log.trace(f"Add count check for: {kwargs.get('list')}. Checking if each value is: "
+                       f"{kwargs.get('operation')}. Using values: {kwargs.get('values')}")
+        self.log.trace(f"Multiplier for check is: {kwargs.get('multiplier')}")
+        if 'target' in kwargs.keys():
+            self.log.trace(f'Target ')
 
         self.heuristics.append(function)
 
@@ -86,13 +94,6 @@ class AddressHeuristics:
                 no_confidence_set.append(True)
 
         diff = no_confidence - confidence
-
-        self.log.trace({
-            'kwargs': kwargs,
-            'diff': diff,
-            'no_confidence_set': no_confidence_set,
-            'confidence_set': confidence_set,
-        })
 
         if no_confidence > confidence and any(no_confidence_set):
             return False, diff

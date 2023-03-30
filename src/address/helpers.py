@@ -1,7 +1,7 @@
 import operator
 from typing import Tuple
 
-from v3.address.heuristics import AddressHeuristics
+from src.address.heuristics import AddressHeuristics
 
 
 class AddressParserHelperClass:

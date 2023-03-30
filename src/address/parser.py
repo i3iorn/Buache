@@ -1,25 +1,25 @@
+import configparser
 import logging
+import os
 import re
+from pathlib import Path
 
 import langdetect
 from .helpers import AddressParserHelperClass
 from typing import List
-from v3.address.component import AddressComponent, AddressComponentType
-from v3.exceptions import AddressTokenizationException, ComponentEvaluationException, MissingAddressComponentEvaluation, \
-    InconclusiveEvaluationException
+from src.address.component import AddressComponent, AddressComponentType
+from src.exceptions import AddressTokenizationException, ComponentEvaluationException, \
+    MissingAddressComponentEvaluation, \
+    InconclusiveEvaluationException, NormalizationError
 
 
 class AddressParser:
-    def __init__(self, ml: bool = False, country: str = None):
+    def __init__(self, country: str = None):
         self.log = logging.getLogger(__name__)
-        self.log.info(f'Log level: {self.log.getEffectiveLevel()}')
-        if ml:
-            from .ml_parser import MLAddressParser
-            self.ml = MLAddressParser()
-        else:
-            self.ml = None
 
-        self.country = country
+        self.country_code = country
+        self.log.debug(f'Country is set to: {country}')
+        self.country = self.load_country_config()
 
     def parse_address(self, input_address: str) -> List[AddressComponent]:
         normalized_address = self.normalize_address(input_address)
@@ -38,34 +38,31 @@ class AddressParser:
         except AttributeError as e:
             raise AddressTokenizationException
 
-        if self.country is None:
-            self.country = self.detect_language(input_address)
+        if self.country_code is None:
+            self.country_code = self.detect_language(input_address)
+            self.log.debug(f'{self.country_code} was detected from the input_address.')
 
-        if self.ml:
-            return self.ml.parse_address(input_address)
-        else:
-            return self.create_address_components(words, input_address)
+        self.country = self.load_country_config()
+
+        try:
+            normalized_address = self.normalize_address(input_address)
+        except NormalizationError as e:
+            self.log.warning(f'Failed to normalize address.')
+            normalized_address = input_address
+
+        return self.create_address_components(words, normalized_address)
 
     def normalize_address(self, input_address: str) -> str:
         # Remove any special characters
         normalized_address = re.sub('[^\w\d\s-]+', '', input_address)
 
-        # Replace abbreviations with their full forms
-        abbreviation_map = {
-            'st': 'street',
-            'ave': 'avenue',
-            'rd': 'road',
-            'blvd': 'boulevard',
-            'hwy': 'highway',
-            'ln': 'lane',
-            'pkwy': 'parkway',
-            'pl': 'place',
-            'dr': 'drive',
-            'v.': 'vägen',
-            'g.': 'gatan'
-        }
+        abbreviation_map = {}
 
-        for abbreviation, full_form in abbreviation_map.items():
+        if self.country.has_section('Abbreviations'):
+            for option in self.country.options('Abbreviations'):
+                abbreviation_map[option] = self.country.get('Abbreviations', option)
+
+        for full_form, abbreviation in abbreviation_map.items():
             normalized_address = re.sub(fr'\b{abbreviation}\b', full_form, normalized_address, flags=re.IGNORECASE)
 
         return normalized_address
@@ -194,3 +191,15 @@ class AddressParser:
         ranked_addresses = sorted(addresses, key=score_address, reverse=True)
 
         return ranked_addresses
+
+    def load_country_config(self):
+        country_config_file = Path(f"{os.getenv('ROOT')}/config/countries/{self.country_code}.ini")
+        if not country_config_file.exists():
+            self.log.info(f'No country information is configured. Using default values.')
+            country_config_file = Path(f"{os.getenv('ROOT')}/config/countries/default.ini")
+
+        country = configparser.ConfigParser()
+        country.read(country_config_file.absolute())
+        self.log.debug(country.sections())
+        self.log.debug(f'Configuration for "{self.country_code}" is loaded.')
+        return country
