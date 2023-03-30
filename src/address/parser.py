@@ -14,12 +14,11 @@ from src.exceptions import AddressTokenizationException, ComponentEvaluationExce
 
 
 class AddressParser:
-    def __init__(self, country: str = None):
+    def __init__(self, country: configparser.ConfigParser):
         self.log = logging.getLogger(__name__)
 
-        self.country_code = country
+        self.country = country
         self.log.debug(f'Country is set to: {country}')
-        self.country = self.load_country_config()
 
     def parse_address(self, input_address: str) -> List[AddressComponent]:
         normalized_address = self.normalize_address(input_address)
@@ -38,12 +37,6 @@ class AddressParser:
         except AttributeError as e:
             raise AddressTokenizationException
 
-        if self.country_code is None:
-            self.country_code = self.detect_language(input_address)
-            self.log.debug(f'{self.country_code} was detected from the input_address.')
-
-        self.country = self.load_country_config()
-
         try:
             normalized_address = self.normalize_address(input_address)
         except NormalizationError as e:
@@ -54,7 +47,7 @@ class AddressParser:
 
     def normalize_address(self, input_address: str) -> str:
         # Remove any special characters
-        normalized_address = re.sub('[^\w\d\s-]+', '', input_address)
+        normalized_address = re.sub('[^\w\d\s\-\:]+', '', input_address)
 
         abbreviation_map = {}
 
@@ -66,12 +59,6 @@ class AddressParser:
             normalized_address = re.sub(fr'\b{abbreviation}\b', full_form, normalized_address, flags=re.IGNORECASE)
 
         return normalized_address
-
-    def detect_language(self, input_address: str) -> str:
-        """
-        Detect the language of the input address using language detection techniques.
-        """
-        return langdetect.detect(input_address)
 
     def create_address_components(self, components: dict, input_address: str) -> List[AddressComponent]:
         address_components = []
@@ -91,6 +78,7 @@ class AddressParser:
                     ) from e
 
                 try:
+                    self.log.debugx(f'Adding tests to check if "{component}" is a "{component_type.name.lower()}"')
                     evaluated_components[component_type][component] = function(
                         self=AddressParserHelperClass,
                         token=component,
@@ -114,9 +102,9 @@ class AddressParser:
                         )
                 except TypeError as e:
                     raise ComponentEvaluationException from e
-        return self.resolve_conflicts(input_address=input_address, components=address_components)
+        return self.resolve_conflicts(components=address_components)
 
-    def resolve_conflicts(self, input_address: str, components: List[AddressComponent]) -> List[AddressComponent]:
+    def resolve_conflicts(self, components: List[AddressComponent]) -> List[AddressComponent]:
         # sort components by position
         sorted_components = components
         sorted_components.sort(reverse=True)
@@ -127,79 +115,3 @@ class AddressParser:
                 resolved_components.append(s_component)
 
         return resolved_components
-
-    def generate_possible_addresses(self, components: List[AddressComponent]) -> List[str]:
-        # Create a list of all possible values for each component type
-        values_by_type = {}
-        for component in components:
-            if component.component_type in values_by_type:
-                values_by_type[component.component_type].append(component.component_value)
-            else:
-                values_by_type[component.component_type] = [component.component_value]
-
-        # Recursively concatenate each value for each component type in all possible combinations
-        addresses = []
-        self._generate_possible_addresses_helper(values_by_type, '', addresses)
-        return addresses
-
-    def _generate_possible_addresses_helper(self, values_by_type, current_address, addresses):
-        # Base case: if there are no more component types to process, add the current address to the list of possible
-        # addresses
-        if not values_by_type:
-            addresses.append(current_address.strip())
-        else:
-            # Recursive case: concatenate each value for the next component type with the current address,
-            # and call the function recursively
-            next_type = list(values_by_type.keys())[0]
-            next_values = values_by_type.pop(next_type)
-            for value in next_values:
-                self._generate_possible_addresses_helper(values_by_type, f'{current_address} {value}', addresses)
-            values_by_type[next_type] = next_values
-
-    def rank_possible_addresses(self, addresses: List[str]) -> List[str]:
-        """
-        Ranks a list of possible addresses based on their likelihood of being the correct address.
-
-        Args:
-        - addresses (List[str]): A list of possible addresses.
-
-        Returns:
-        - ranked_addresses (List[str]): A list of the same addresses, ranked by their likelihood of being correct.
-        """
-
-        # Define a scoring function for each address
-        def score_address(address):
-            # Split the input address into components
-            input_components = self.parse_address(address)
-
-            # Count the number of matching components between the input address and the possible address
-            matching_components = sum(component in address for component in input_components)
-
-            # Compute the average distance between matching components
-            distances = []
-            for input_component in input_components:
-                for possible_component in self.parse_address(address):
-                    if input_component.component_type == possible_component.component_type:
-                        distances.append(abs(input_component.position - possible_component.position))
-            avg_distance = sum(distances) / len(distances)
-
-            # Compute the score as a weighted sum of the number of matching components and the average distance
-            score = matching_components + (1 / avg_distance)
-            return score
-
-        # Rank the addresses based on their score
-        ranked_addresses = sorted(addresses, key=score_address, reverse=True)
-
-        return ranked_addresses
-
-    def load_country_config(self):
-        country_config_file = Path(f"{os.getenv('ROOT')}/config/countries/{self.country_code}.ini")
-        if not country_config_file.exists():
-            self.log.info(f'No country information is configured. Using default values.')
-            country_config_file = Path(f"{os.getenv('ROOT')}/config/countries/default.ini")
-
-        country = configparser.ConfigParser()
-        country.read(country_config_file.absolute())
-        self.log.debug(country.sections())
-        self.log.debug(f'Configuration for "{self.country_code}" is loaded.')
-        return country

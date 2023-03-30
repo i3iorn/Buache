@@ -17,7 +17,7 @@ class BuacheFormatter(logging.Formatter):
 
     FORMATS = {
         logging.TRACE: level1 + format + reset,
-        logging.DEBUG2: level2 + format + reset,
+        logging.DEBUGX: level2 + format + reset,
         logging.DEBUG: level3 + format + reset,
         logging.VERBOSE: level4 + format + reset,
         logging.INFO: level5 + format + reset,

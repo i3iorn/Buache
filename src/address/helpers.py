@@ -1,3 +1,4 @@
+import logging
 import operator
 from typing import Tuple
 
@@ -6,11 +7,10 @@ from src.address.heuristics import AddressHeuristics
 
 class AddressParserHelperClass:
     def __init__(self):
-        pass
+        self.log = logging.getLogger(__name__)
 
     def is_street_number(self, token: str, position, full_address: str = None) -> Tuple[bool, float]:
         """Determine whether the input string represents a street number."""
-
         address_heuristics = AddressHeuristics()
         address_heuristics.add_bool(operation=str.isdigit, multiplier=1.5, values=[token])
         address_heuristics.add_bool(operation=operator.gt, multiplier=1.1, values=[len(token), 0])

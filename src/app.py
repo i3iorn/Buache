@@ -14,6 +14,7 @@ class Application:
             self,
             mode: MODES = 'DEVELOPMENT'
     ):
+        self.full = None
         self.log = logging.getLogger(__name__)
         if mode == 'PRODUCTION':
             logging.getLogger().setLevel('INFO')
@@ -23,4 +24,6 @@ class Application:
             logging.getLogger().setLevel('TRACE')
 
         self.log.info(f'Running app with logg level: {self.log.getEffectiveLevel()}')
-        self.address = Address
+
+    def check_address(self, string):
+        return Address(string)

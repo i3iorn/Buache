@@ -56,3 +56,6 @@ class AddressComponent:
 
     def __lt__(self, other_component: 'AddressComponent') -> bool:
         return self.confidence < other_component.confidence
+
+    def sort_by_component_order(self, items, country):
+        return sorted(items, key=key_func)

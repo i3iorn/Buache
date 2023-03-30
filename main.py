@@ -18,6 +18,9 @@ addresses = [
 ]
 
 app = run(mode='DEVELOPMENT')
-app.address(addresses[0])
+for string in addresses:
+    address = app.check_address(string)
+    print(address.full_address)
+    quit()
 
 unittest.main()

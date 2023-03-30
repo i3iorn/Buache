@@ -71,6 +71,8 @@ class AddressHeuristics:
             score = 1 / (count * kwargs.get('multiplier') + 1)
             return True, score
 
+        self.log.trace(f"Add distance check between {kwargs.get('count')} and {kwargs.get('target')}. "
+                       f"Multiplier is: {kwargs.get('multiplier')}")
         self.heuristics.append(function)
 
     def evaluate(self, **kwargs) -> Tuple[bool, float]:
@@ -84,6 +86,8 @@ class AddressHeuristics:
         Returns:
         A tuple of a boolean indicating whether the token matches the heuristics and a float indicating the confidence in the match.
         """
+        self.log.trace(f'Checking {len(self.heuristics)} heuristics.')
+
         confidence_set = []
         no_confidence_set = []
         confidence = 1.0
@@ -100,9 +104,12 @@ class AddressHeuristics:
         diff = no_confidence - confidence
 
         if no_confidence > confidence and any(no_confidence_set):
+            self.log.debugx(f'Tests failed with confidence: {no_confidence}')
             return False, diff
         elif confidence > no_confidence and any(confidence_set):
+            self.log.debugx(f'Tests passed with confidence: {confidence}')
             return True, -diff
         else:
+            self.log.debug(f'Tests were inconclusive.')
             raise InconclusiveEvaluationException(f'Unable to determine if "{kwargs.get("token")}" matches any heuristic')
 

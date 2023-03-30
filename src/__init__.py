@@ -21,13 +21,12 @@ __all__ = [
 # Define custom logging levels
 new_levels = {
     'VERBOSE': 15,
-    'DEBUG2': 5,
+    'DEBUGX': 5,
     'TRACE': 1
 }
 
 for name, level in new_levels.items():
     logging.addLevelName(level, name.upper())
-    logging.addLevelName(level, name.lower())
 
 
     def function(self, message, *args, **kwargs):
@@ -49,7 +48,7 @@ with open(f'{log_config_file}', 'r') as log_config:
 
 logger = logging.getLogger()
 logger.setLevel('DEBUG')
-logger.debug(f'Logging set up with additional levels, VERBOSE(15), DEBUG2(5), TRACE(1).')
+logger.debug(f'Logging set up with additional levels, VERBOSE(15), DEBUGX(5), TRACE(1).')
 
 logger.debug(f'Running main config file.')
 main_config_file = Path(f'{config_folder}/config.ini').absolute()
@@ -62,7 +61,6 @@ except FileNotFoundError as e:
     msg = f'Could not read {main_config_file}'
     logger.error(msg)
     raise ConfigurationError(msg)
-
 
 def run(**kwargs) -> Application:
     return Application(**kwargs)
