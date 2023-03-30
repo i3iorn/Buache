@@ -1,4 +1,5 @@
 import logging
+import config
 
 from src.address import Address
 
@@ -26,4 +27,4 @@ class Application:
         self.log.info(f'Running app with logg level: {self.log.getEffectiveLevel()}')
 
     def check_address(self, string):
-        return Address(string)
+        return Address(self, string)

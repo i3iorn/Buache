@@ -14,6 +14,9 @@ class AddressComponentType(Enum):
     STATE = auto()
     COUNTRY = auto()
 
+    def __init__(self, value):
+        self._value_ = int(value)
+
 
 class AddressComponent:
     def __init__(self, component_type: AddressComponentType, component_value: str, confidence: float, position: int):
@@ -56,6 +59,3 @@ class AddressComponent:
 
     def __lt__(self, other_component: 'AddressComponent') -> bool:
         return self.confidence < other_component.confidence
-
-    def sort_by_component_order(self, items, country):
-        return sorted(items, key=key_func)

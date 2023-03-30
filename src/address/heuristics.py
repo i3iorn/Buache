@@ -2,7 +2,7 @@ import logging
 import math
 from typing import List, Tuple, Optional
 
-from src.exceptions import InconclusiveEvaluationException
+from src.exceptions import InconclusiveEvaluationException, ComponentEvaluationException
 
 
 class AddressHeuristics:
@@ -28,7 +28,7 @@ class AddressHeuristics:
 
     def add_bool(self, **kwargs) -> None:
         def function() -> Tuple:
-            return kwargs.get('operation')(*kwargs.get('values')), kwargs.get('multiplier')
+            return kwargs.get('operation')(*kwargs.get('values')), float(kwargs.get('multiplier'))
 
         self.log.trace(f"Add boolean check for: {kwargs.get('operation')}. \nUsing values: {kwargs.get('values')}"
                        f"\nMultiplier is set to: {kwargs.get('multiplier')}")
@@ -49,7 +49,7 @@ class AddressHeuristics:
             if 'target' in kwargs.keys():
                 count = math.sqrt(math.pow((count - kwargs.get('target')), 2))
 
-            score = 1 + (count * kwargs.get('multiplier'))
+            score = 1 + (count * float(kwargs.get('multiplier')))
 
             return result, score
 
@@ -68,7 +68,7 @@ class AddressHeuristics:
     def add_distance(self, **kwargs) -> None:
         def function() -> Tuple:
             count = math.sqrt(math.pow(kwargs.get('count') - kwargs.get('target'), 2))
-            score = 1 / (count * kwargs.get('multiplier') + 1)
+            score = 1 / (count * float(kwargs.get('multiplier')) + 1)
             return True, score
 
         self.log.trace(f"Add distance check between {kwargs.get('count')} and {kwargs.get('target')}. "
@@ -92,14 +92,22 @@ class AddressHeuristics:
         no_confidence_set = []
         confidence = 1.0
         no_confidence = 1.0
-        for heuristic in self.heuristics:
-            result, score = heuristic(**kwargs)
-            if result:
-                confidence *= score
-                confidence_set.append(True)
-            else:
-                no_confidence *= score
-                no_confidence_set.append(True)
+        try:
+            for heuristic in self.heuristics:
+                result, score = heuristic(**kwargs)
+                if result:
+                    confidence *= score
+                    confidence_set.append(True)
+                else:
+                    no_confidence *= score
+                    no_confidence_set.append(True)
+        except TypeError as e:
+            self.log.warning(f'Confidence: {confidence}')
+            self.log.warning(f'No Confidence: {no_confidence}')
+            self.log.warning(f'Confidence is set: {confidence_set}')
+            self.log.warning(f'Confidence: {no_confidence_set}')
+            self.log.warning(f'Score: {score}')
+            raise ComponentEvaluationException from e
 
         diff = no_confidence - confidence
 
