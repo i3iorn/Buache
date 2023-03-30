@@ -30,8 +30,8 @@ class AddressHeuristics:
         def function() -> Tuple:
             return kwargs.get('operation')(*kwargs.get('values')), kwargs.get('multiplier')
 
-        self.log.trace(f"Add boolean check for: {kwargs.get('operation')}. Using values: {kwargs.get('values')}")
-        self.log.trace(f"Multiplier for check is: {kwargs.get('multiplier')}")
+        self.log.trace(f"Add boolean check for: {kwargs.get('operation')}. \nUsing values: {kwargs.get('values')}"
+                       f"\nMultiplier is set to: {kwargs.get('multiplier')}")
         self.heuristics.append(function)
 
     def add_count(self, **kwargs) -> None:
@@ -53,11 +53,15 @@ class AddressHeuristics:
 
             return result, score
 
-        self.log.trace(f"Add count check for: {kwargs.get('list')}. Checking if each value is: "
-                       f"{kwargs.get('operation')}. Using values: {kwargs.get('values')}")
-        self.log.trace(f"Multiplier for check is: {kwargs.get('multiplier')}")
+        msg = f"Add count check for: {kwargs.get('list')}. " \
+              f"\nChecking if each value is: {kwargs.get('operation')}. " \
+              f"\nUsing values: {kwargs.get('values')}" \
+              f"\nMultiplier for check is: {kwargs.get('multiplier')}"
+
         if 'target' in kwargs.keys():
-            self.log.trace(f'Target ')
+            msg += f"\nTarget: {kwargs.get('target')}"
+
+        self.log.trace(msg)
 
         self.heuristics.append(function)
 

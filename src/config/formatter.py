@@ -2,17 +2,17 @@ import logging
 
 
 class BuacheFormatter(logging.Formatter):
-    level1 = "\x1b[38;5;243m"
-    level2 = "\x1b[38;5;248m"
-    level3 = "\x1b[38;5;253m"
-    level4 = "\x1b[38;5;15m"
+    level1 = "\x1b[38;5;241m"
+    level2 = "\x1b[38;5;245m"
+    level3 = "\x1b[38;5;249m"
+    level4 = "\x1b[38;5;253m"
     level5 = "\x1b[38;5;43m"
     level6 = "\x1b[38;5;3m"
     level7 = "\x1b[38;5;166m"
     level8 = "\x1b[38;5;160m"
     reset = "\x1b[0m"
-    format = "[%(asctime)s] [%(name)30s] [%(funcName)30s] [%(levelname)8s] [%(lineno)4d] \n" \
-             "======================================================================================================" \
+    format = f"[%(asctime)s] [%(name)28s] [%(funcName)28s] [%(levelname)7s] [%(lineno)4d] \n" \
+             "========================================================================================================"\
              "\n%(message)s\n "
 
     FORMATS = {
