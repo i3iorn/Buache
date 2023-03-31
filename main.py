@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from src import run
 import unittest
 
@@ -24,6 +26,14 @@ addresses = [
 app = run(mode='DEVELOPMENT')
 for string in addresses:
     address = app.check_address(string)
-    print(address.full_address)
+    address.components.sort(reverse=True)
+    pprint([
+        {
+            'value': c.component_value,
+            'type': c.component_type,
+            'position': c.position,
+            'confidence': c.confidence
+        }
+        for c in address.components])
 
 unittest.main()
