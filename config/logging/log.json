@@ -2,7 +2,7 @@
     "version": 1,
     "formatters": {
         "console": {
-            "()": "config.formatter.BuacheFormatter"
+            "()": "config.logging.formatter.BuacheFormatter"
         },
         "file": {
             "format": "[%(asctime)s] [%(name)s] [%(funcName)s] [%(levelname)s] [%(lineno)d] %(message)s"

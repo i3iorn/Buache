@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING
 
 import langdetect
 
+import config
 from config import CONFIG
-from config import ROOT
 from .component import AddressComponentType
 from .parser import AddressParser
 from .ml_parser import MLAddressParser
@@ -41,7 +41,7 @@ class Address:
             self.parser = MLAddressParser()
         else:
             self.log.info(f'Using heuristics when parsing address.')
-            self.parser = AddressParser(self.app)
+            self.parser = AddressParser()
 
         if address_string is not None:
             self.log.debug(f'Starting {__name__} with address_string = {address_string.__str__()}')
@@ -68,13 +68,15 @@ class Address:
         return langdetect.detect(input_address)
 
     def load_country_config(self):
-        country_config_file = Path(f"{os.getenv('ROOT')}/config/countries/{self.country_code}.ini")
-        if not country_config_file.exists():
-            self.log.info(f'No country information is configured. Using default values.')
-            country_config_file = Path(f"{ROOT}/config/countries/default.ini")
+        CONFIG.read(Path(f"{config.country_folder}/default.ini").absolute())
+        country_config_folder = Path(f"{config.country_folder}/{self.country_code}")
+        if country_config_folder.exists():
+            for config_file in country_config_folder.iterdir():
+                CONFIG.read(config_file)
+        else:
+            self.log.warning(f'Failed to load config for {self.country_code}\n'
+                             f'{country_config_folder}')
 
-
-        CONFIG.read(country_config_file.absolute())
         self.log.debug(f'Configuration for "{self.country_code}" is loaded.')
 
         self.log.debugx(f'Update AddressComponentType order based on configuration.')

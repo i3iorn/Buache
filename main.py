@@ -17,10 +17,13 @@ addresses = [
     "Oxbacksgatan 3 lgh 1213 72461	Västerås"
 ]
 
+addresses = [
+    "Oxbacksgatan 3 lgh 1213 72461	Västerås"
+]
+
 app = run(mode='DEVELOPMENT')
 for string in addresses:
     address = app.check_address(string)
     print(address.full_address)
-    quit()
 
 unittest.main()

@@ -118,6 +118,6 @@ class AddressHeuristics:
             self.log.debugx(f'Tests passed with confidence: {confidence}')
             return True, -diff
         else:
-            self.log.debug(f'Tests were inconclusive.')
+            self.log.debugx(f'Tests were inconclusive.')
             raise InconclusiveEvaluationException(f'Unable to determine if "{kwargs.get("token")}" matches any heuristic')
 
