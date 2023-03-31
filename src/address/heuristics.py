@@ -7,26 +7,52 @@ from src.exceptions import InconclusiveEvaluationException, ComponentEvaluationE
 
 class AddressHeuristics:
     """
-    This class defines a set of heuristics to evaluate whether a token matches certain
-    patterns. The class has three methods to add heuristics: add_bool, add_count, and
-    add_distance. These methods take in certain parameters and generate functions that
-    will be added to the list of heuristics.
+    This class contains heuristics used to evaluate whether a token matches certain patterns.
+    The heuristics can be added using the add_bool, add_count, and add_distance methods.
+    The evaluate method applies all heuristics to the input and calculates a confidence score based on how
+    many of the heuristics matched the input. If no heuristics match the input, the method raises an
+    InconclusiveEvaluationException.
 
-    The evaluate method is used to evaluate a single token using all the heuristics added
-    to the instance. This method takes in keyword arguments representing the token,
-    position, count, and other values required by the heuristics. The method applies
-    each of the heuristics to the input and calculates a confidence score based on how
-    many of the heuristics matched the input. The method returns a tuple with a boolean
-    value indicating whether the input matched the heuristics and a float indicating the
-    confidence score.
+    Attributes:
 
-    If no heuristics match the input, the method raises an InconclusiveEvaluationException.
+        log: a logging instance.
+        heuristics: a list to store the heuristics to be evaluated.
+
+    Methods:
+
+        add_bool: add a boolean check to the heuristics list.
+        add_count: add a count check to the heuristics list.
+        add_distance: add a distance check to the heuristics list.
+        evaluate: evaluate a single token using all heuristics in the list.
+
+    Exceptions:
+
+        InconclusiveEvaluationException: raised when no heuristics match the input.
+        ComponentEvaluationException: raised when an error occurs during heuristic evaluation.
     """
     def __init__(self):
+        """
+        Initializes an instance of the AddressHeuristics class.
+        """
+
         self.log = logging.getLogger(__name__)
         self.heuristics = []
 
+    def add(self, heuristic_type, **kwargs):
+        func = getattr(self, f'add_{heuristic_type}', 'add_bool')
+        func(**kwargs)
+
     def add_bool(self, **kwargs) -> None:
+        """
+        Adds a boolean heuristic function to the heuristics list.
+
+        Args:
+            kwargs: keyword arguments representing the function parameters.
+
+        Returns:
+            None.
+        """
+
         def function() -> Tuple:
             return kwargs.get('operation')(*kwargs.get('values')), float(kwargs.get('multiplier'))
 
@@ -35,6 +61,17 @@ class AddressHeuristics:
         self.heuristics.append(function)
 
     def add_count(self, **kwargs) -> None:
+
+        """
+        Adds a count heuristic function to the heuristics list.
+
+        Args:
+            kwargs: keyword arguments representing the function parameters.
+
+        Returns:
+            None.
+        """
+
         def function() -> Tuple:
             count = 0
             for v in kwargs.get('list'):
@@ -66,6 +103,16 @@ class AddressHeuristics:
         self.heuristics.append(function)
 
     def add_distance(self, **kwargs) -> None:
+        """
+        Adds a distance heuristic function to the heuristics list.
+
+        Args:
+            kwargs: keyword arguments representing the function parameters.
+
+        Returns:
+            None.
+        """
+
         def function() -> Tuple:
             count = math.sqrt(math.pow(kwargs.get('count') - kwargs.get('target'), 2))
             score = 1 / (count * float(kwargs.get('multiplier')) + 1)
@@ -92,8 +139,8 @@ class AddressHeuristics:
         no_confidence_set = []
         confidence = 1.0
         no_confidence = 1.0
-        try:
-            for heuristic in self.heuristics:
+        for heuristic in self.heuristics:
+            try:
                 result, score = heuristic(**kwargs)
                 if result:
                     confidence *= score
@@ -101,13 +148,13 @@ class AddressHeuristics:
                 else:
                     no_confidence *= score
                     no_confidence_set.append(True)
-        except TypeError as e:
-            self.log.warning(f'Confidence: {confidence}')
-            self.log.warning(f'No Confidence: {no_confidence}')
-            self.log.warning(f'Confidence is set: {confidence_set}')
-            self.log.warning(f'Confidence: {no_confidence_set}')
-            self.log.warning(f'Score: {score}')
-            raise ComponentEvaluationException from e
+            except TypeError as e:
+                self.log.warning(f'Confidence: {confidence}')
+                self.log.warning(f'No Confidence: {no_confidence}')
+                self.log.warning(f'Confidence is set: {confidence_set}')
+                self.log.warning(f'Confidence: {no_confidence_set}')
+                self.log.warning(f'Heuristic: {heuristic}')
+                raise ComponentEvaluationException from e
 
         diff = no_confidence - confidence
 

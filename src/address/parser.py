@@ -41,6 +41,7 @@ class AddressParser:
         normalized_address = self.normalize_address(input_address)
         tokens = self.create_tokens(normalized_address)
         address_components = self.create_address_components(tokens, normalized_address)
+
         return address_components
 
     def normalize_address(self, input_address: str) -> str:
@@ -87,12 +88,16 @@ class AddressParser:
         :return: A list of AddressComponent objects.
         """
 
+        # Any component with a lower confidence than this is discarded.
+        threshhold = float(CONFIG.get('AddressHeuristics.evaluation', 'threshold'))
+
         evaluated_components = self.evaluate_address_components(tokens, input_address)
         address_components = []
         for component_type, components in evaluated_components.items():
             for component_value, valuation in components.items():
-                component = self.create_address_component(component_type, component_value, tokens, valuation)
-                address_components.append(component)
+                if valuation[0] and valuation[1] > threshhold:
+                    component = self.create_address_component(component_type, component_value, tokens, valuation)
+                    address_components.append(component)
         return address_components
 
     def create_address_component(self, component_type: AddressComponentType, component_value: str, tokens: dict,
